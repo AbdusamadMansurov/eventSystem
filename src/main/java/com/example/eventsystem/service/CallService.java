@@ -40,7 +40,7 @@ public class CallService {
 
     public ApiResponse<Page<Call>> getAll(int page, Employee employee) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Call> calls = callRepository.findAllByClient_Company_Id(employee.getCompany().getId(), pageable);
+        Page<Call> calls = callRepository.findAllByClient_Department_Company_Id(employee.getCompany().getId(), pageable);
         if (calls.isEmpty()) {
             return ApiResponse.<Page<Call>>builder().
                     message("Calls not found").
@@ -79,20 +79,20 @@ public class CallService {
     public ApiResponse<Page<Call>> getByUser(Long id, int page, LocalDate startDate, LocalDate endDate, Employee employee) {
         Pageable pageable = PageRequest.of(page, size);
         Long companyId = employee.getCompany().getId();
-        Page<Call> calls = callRepository.findAllByEmployee_IdAndClient_Company_Id(id, companyId, pageable);
+        Page<Call> calls = callRepository.findAllByEmployee_IdAndClient_Department_Company_Id(id, companyId, pageable);
 
         if (startDate != null && endDate == null) {
             LocalDateTime startDataTime = LocalDateTime.of(startDate, LocalTime.now());
-            calls = callRepository.findAllByEmployee_IdAndClient_Company_IdAndCreatedTimeAfter(id, companyId, startDataTime, pageable);
+            calls = callRepository.findAllByEmployee_IdAndClient_Department_Company_IdAndCreatedTimeAfter(id, companyId, startDataTime, pageable);
         }
         if (endDate != null && startDate == null) {
             LocalDateTime endDataTime = LocalDateTime.of(endDate, LocalTime.now());
-            calls = callRepository.findAllByEmployee_IdAndClient_Company_IdAndCreatedTimeBefore(id, companyId, endDataTime, pageable);
+            calls = callRepository.findAllByEmployee_IdAndClient_Department_Company_IdAndCreatedTimeBefore(id, companyId, endDataTime, pageable);
         }
         if (endDate != null && startDate != null) {
             LocalDateTime startDataTime = LocalDateTime.of(startDate, LocalTime.now());
             LocalDateTime endDataTime = LocalDateTime.of(endDate, LocalTime.now());
-            calls = callRepository.findAllByEmployee_IdAndClient_Company_IdAndCreatedTimeBetween(id, companyId, startDataTime, endDataTime, pageable);
+            calls = callRepository.findAllByEmployee_IdAndClient_Department_Company_IdAndCreatedTimeBetween(id, companyId, startDataTime, endDataTime, pageable);
         }
 
         if (calls.isEmpty()) {

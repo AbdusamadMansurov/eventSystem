@@ -40,13 +40,13 @@ public class OrderService {
         Page<Order> orderPage;
 
         if (active == null && ready == null)
-            orderPage = orderRepository.findAllByClient_Company_IdAndActiveFalseAndReadyFalse(companyId, pageable);
+            orderPage = orderRepository.findAllByClient_Department_Company_IdAndActiveFalseAndReadyFalse(companyId, pageable);
         else if (Boolean.TRUE.equals(active) && Boolean.FALSE.equals(ready))
-            orderPage = orderRepository.findAllByClient_Company_IdAndActiveTrueAndReadyFalse(companyId, pageable);
+            orderPage = orderRepository.findAllByClient_Department_Company_IdAndActiveTrueAndReadyFalse(companyId, pageable);
         else if (Boolean.TRUE.equals(ready) && Boolean.FALSE.equals(active))
-            orderPage = orderRepository.findAllByClient_Company_IdAndActiveFalseAndReadyTrue(companyId, pageable);
+            orderPage = orderRepository.findAllByClient_Department_Company_IdAndActiveFalseAndReadyTrue(companyId, pageable);
         else
-            orderPage = orderRepository.findAllByClient_Company_IdAndActiveTrueAndReadyTrue(companyId, pageable);
+            orderPage = orderRepository.findAllByClient_Department_Company_IdAndActiveTrueAndReadyTrue(companyId, pageable);
 
         if (orderPage.isEmpty())
             return ApiResponse.<Page<Order>>builder().

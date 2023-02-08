@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 
 @Repository
 public interface CallRepository extends JpaRepository<Call, Long> {
-    Page<Call> findAllByEmployee_IdAndClient_Company_Id(Long employee_id, Long companyId, Pageable pageable);
+    Page<Call> findAllByEmployee_IdAndClient_Department_Company_Id(Long employee_id, Long companyId, Pageable pageable);
 
-    Page<Call> findAllByClient_Company_Id(Long id, Pageable pageable);
+    Page<Call> findAllByClient_Department_Company_Id(Long id, Pageable pageable);
 
-    Page<Call> findAllByEmployee_IdAndClient_Company_IdAndCreatedTimeBefore(Long employee_id,Long companyId, LocalDateTime createdTime, Pageable pageable);
+    Page<Call> findAllByEmployee_IdAndClient_Department_Company_IdAndCreatedTimeBefore(Long employee_id,Long companyId, LocalDateTime createdTime, Pageable pageable);
 
-    Page<Call> findAllByEmployee_IdAndClient_Company_IdAndCreatedTimeAfter(Long employee_id, Long companyId, LocalDateTime createdTime, Pageable pageable);
+    Page<Call> findAllByEmployee_IdAndClient_Department_Company_IdAndCreatedTimeAfter(Long employee_id, Long companyId, LocalDateTime createdTime, Pageable pageable);
 
-    Page<Call> findAllByEmployee_IdAndClient_Company_IdAndCreatedTimeBetween(Long employee_id, Long companyId,LocalDateTime createdTime, LocalDateTime createdTime2, Pageable pageable);
+    Page<Call> findAllByEmployee_IdAndClient_Department_Company_IdAndCreatedTimeBetween(Long employee_id, Long companyId,LocalDateTime createdTime, LocalDateTime createdTime2, Pageable pageable);
 
     Page<Call> findAllByClient_Id(Long clientId, Pageable pageable);
 }

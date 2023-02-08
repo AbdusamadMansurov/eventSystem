@@ -10,7 +10,6 @@ import com.example.eventsystem.repository.DistrictRepository;
 import com.example.eventsystem.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class ProductService {
     private final DistrictRepository districtRepository;
 
     public ApiResponse<List<Product>> getAll(Employee employee) {
-        List<Product> products = productRepository.findAllByActiveTrueAndCategory_Bot_Company_Id(employee.getCompany().getId());
+        List<Product> products = productRepository.findAllByActiveTrueAndCategory_Department_Company_Id(employee.getCompany().getId());
         return ApiResponse.<List<Product>>builder().
                 message("Here").
                 status(200).

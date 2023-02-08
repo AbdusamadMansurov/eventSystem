@@ -13,13 +13,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Page<Order> findAllByClient_Company_IdAndActiveTrueAndReadyTrue(Long companyId, Pageable pageable);
+    Page<Order> findAllByClient_Department_Company_IdAndActiveTrueAndReadyTrue(Long companyId, Pageable pageable);
 
-    Page<Order> findAllByClient_Company_IdAndActiveTrueAndReadyFalse(Long companyId, Pageable pageable);
+    Page<Order> findAllByClient_Department_Company_IdAndActiveTrueAndReadyFalse(Long companyId, Pageable pageable);
 
-    Page<Order> findAllByClient_Company_IdAndActiveFalseAndReadyTrue(Long companyId, Pageable pageable);
+    Page<Order> findAllByClient_Department_Company_IdAndActiveFalseAndReadyTrue(Long companyId, Pageable pageable);
 
-    Page<Order> findAllByClient_Company_IdAndActiveFalseAndReadyFalse(Long companyId, Pageable pageable);
+    Page<Order> findAllByClient_Department_Company_IdAndActiveFalseAndReadyFalse(Long companyId, Pageable pageable);
 
 
 }

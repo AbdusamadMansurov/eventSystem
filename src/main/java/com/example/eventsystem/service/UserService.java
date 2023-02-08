@@ -39,7 +39,7 @@ public class UserService {
                     success(false).
                     build();
 
-        Page<User> users = userRepository.findAllByActiveAndCompany(pageable, employee.getCompany(), active);
+        Page<User> users = userRepository.findAllByActiveAndDepartment_Company(pageable, employee.getCompany(), active);
         if (users.isEmpty()) {
             return ApiResponse.<Page<User>>builder().
                     success(false).
