@@ -66,7 +66,7 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if (user.getCompany() == employee.getCompany())
+            if (user.getDepartment().getCompany().getId().equals(employee.getCompany().getId()))
                 return ApiResponse.<User>builder().
                         success(true).
                         status(200).

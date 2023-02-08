@@ -5,8 +5,10 @@ import com.example.eventsystem.dto.BotDTO;
 import com.example.eventsystem.model.Attachment;
 import com.example.eventsystem.model.Bot;
 import com.example.eventsystem.model.Company;
+import com.example.eventsystem.model.Department;
 import com.example.eventsystem.repository.BotRepository;
 import com.example.eventsystem.repository.CompanyRepository;
+import com.example.eventsystem.repository.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +29,7 @@ public class BotService {
     private int size;
     private final BotRepository botRepository;
     private final CompanyRepository companyRepository;
+    private final DepartmentRepository departmentRepository;
 
     public ApiResponse<Page<Bot>> getAll(int page) {
         Pageable pageable = PageRequest.of(page, size);
@@ -71,7 +75,11 @@ public class BotService {
                     build();
         }
         Company company = companyOptional.get();
-        List<Bot> botList = company.getBotList();
+        List<Bot> botList = new ArrayList<>();
+        for (Department department : company.getDepartmentList()) {
+            if (department.getBot() != null)
+                botList.add(department.getBot());
+        }
         if (botList.isEmpty())
             return ApiResponse.<List<Bot>>builder().
                     message("Bots not found by this company!!!").
@@ -88,15 +96,15 @@ public class BotService {
 
     @SneakyThrows
     public ApiResponse<Bot> add(BotDTO dto) {
-        Optional<Company> companyOptional = companyRepository.findById(dto.getCompanyId());
-        if (companyOptional.isEmpty())
+        Optional<Department> departmentOptional = departmentRepository.findById(dto.getDepartmentId());
+        if (departmentOptional.isEmpty())
             return ApiResponse.<Bot>builder().
-                    message("Company not found!!!").
+                    message("Department not found!!!").
                     status(400).
                     success(false).
                     build();
         Bot bot = new Bot();
-        bot.setCompany(companyOptional.get());
+        bot.setDepartment(departmentOptional.get());
         bot.setActive(dto.isActive());
         bot.setToken(dto.getToken());
         bot.setUsername(dto.getUsername());
@@ -130,18 +138,18 @@ public class BotService {
                     build();
         }
         Bot bot = botOptional.get();
-        Optional<Company> companyOptional = companyRepository.findById(dto.getCompanyId());
-        if (companyOptional.isEmpty())
+        Optional<Department> departmentOptional = departmentRepository.findById(dto.getDepartmentId());
+        if (departmentOptional.isEmpty())
             return ApiResponse.<Bot>builder().
-                    message("Company not found!!!").
+                    message("Department not found!!!").
                     status(400).
                     success(false).
                     build();
-        bot.setCompany(companyOptional.get());
+        bot.setDepartment(departmentOptional.get());
         if (dto.getPhoto() != null && !dto.getPhoto().isEmpty()) {
             MultipartFile photo = dto.getPhoto();
             Attachment attachment = new Attachment();
-            if (bot.getLogo() != null){
+            if (bot.getLogo() != null) {
                 attachment = bot.getLogo();
             }
             attachment.setOriginalName(photo.getOriginalFilename());

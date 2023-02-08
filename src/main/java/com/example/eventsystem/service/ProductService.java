@@ -25,9 +25,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
-
-    @Value("${telegram.bot.id}")
-    private Long botId;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final AttachmentRepository attachmentRepository;
@@ -46,7 +43,7 @@ public class ProductService {
 
     public ApiResponse<Product> getOne(Long id, Employee employee) {
         Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isEmpty() || !optionalProduct.get().getCategory().getBot().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (optionalProduct.isEmpty() || !optionalProduct.get().getCategory().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Product>builder().
                     message("Not Found").
                     status(204).
@@ -65,7 +62,7 @@ public class ProductService {
     @SneakyThrows
     public ApiResponse<?> save(ProductDTO productDTO, Employee employee) {
         Optional<Category> categoryOptional = categoryRepository.findById(productDTO.getCategoryId());
-        if (categoryOptional.isEmpty() || !categoryOptional.get().getBot().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (categoryOptional.isEmpty() || !categoryOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     message("Category not found").
                     status(400).
@@ -133,7 +130,7 @@ public class ProductService {
                     success(false).
                     build();
         }
-        if (optionalCategory.isEmpty() || !optionalCategory.get().getBot().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (optionalCategory.isEmpty() || !optionalCategory.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     message("Category Not Found").
                     status(204).
@@ -193,7 +190,7 @@ public class ProductService {
 
     public ApiResponse<?> delete(Long id, Employee employee) {
         Optional<Product> optionalProduct = productRepository.findById(id);
-        if (optionalProduct.isEmpty() || !optionalProduct.get().getCategory().getBot().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (optionalProduct.isEmpty() || !optionalProduct.get().getCategory().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     message("Product Not Found").
                     status(204).

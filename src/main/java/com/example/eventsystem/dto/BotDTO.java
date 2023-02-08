@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @ToString
 public class BotDTO {
     private String token, username;
-    private Long companyId;
+    private Long departmentId;
     private boolean active;
 
     private MultipartFile photo;

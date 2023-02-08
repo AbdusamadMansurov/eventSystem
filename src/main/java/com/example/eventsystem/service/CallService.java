@@ -61,7 +61,7 @@ public class CallService {
     public ApiResponse<Call> getOne(Long id, Employee employee) {
         Optional<Call> callOptional = callRepository.findById(id);
 
-        if (callOptional.isPresent() && callOptional.get().getClient().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (callOptional.isPresent() && callOptional.get().getClient().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Call>builder().
                     message("Call here").
                     status(200).
@@ -285,7 +285,7 @@ public class CallService {
 
     public ApiResponse<Page<Call>> getByClient(Long clientId, int page, Employee employee) {
         Optional<User> clientOptional = userRepository.findById(clientId);
-        if (clientOptional.isEmpty() || !clientOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (clientOptional.isEmpty() || !clientOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Page<Call>>builder().
                     message("Client not found!!!").
                     success(false).

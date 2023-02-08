@@ -21,14 +21,14 @@ public class Bot {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Company company;
+    private Department department;
     @OneToMany
     @ToString.Exclude
     private List<Employee> authorizedEmployees;
     @OneToMany(mappedBy = "bot")
     @ToString.Exclude
     private List<User> userList;
-    @OneToMany(mappedBy = "bot")
+    @OneToMany
     @ToString.Exclude
     private List<Category> categories;
 

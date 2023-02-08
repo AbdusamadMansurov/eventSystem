@@ -84,14 +84,14 @@ public class OrderService {
         Optional<User> clientOptional = userRepository.findById(dto.getClientId());
         Optional<Product> productOptional = productRepository.findById(dto.getProductId());
 
-        if (clientOptional.isEmpty()|| !clientOptional.get().getCompany().getId().equals(receiver.getCompany().getId()))
+        if (clientOptional.isEmpty()|| !clientOptional.get().getDepartment().getCompany().getId().equals(receiver.getCompany().getId()))
             return ApiResponse.<Order>builder().
                     message("Client not found!!!").
                     success(false).
                     status(400).
                     build();
 
-        if (productOptional.isEmpty() || !productOptional.get().getCategory().getBot().getCompany().getId().equals(receiver.getCompany().getId()))
+        if (productOptional.isEmpty() || !productOptional.get().getCategory().getDepartment().getCompany().getId().equals(receiver.getCompany().getId()))
             return ApiResponse.<Order>builder().
                     message("Product not found!!!").
                     success(false).
@@ -133,7 +133,7 @@ public class OrderService {
         Optional<Employee> receiverOptional = employeeRepository.findById(dto.getReceiverId());
         Optional<Product> productOptional = productRepository.findById(dto.getProductId());
 
-        if (clientOptional.isEmpty()|| !clientOptional.get().getCompany().getId().equals(employee.getCompany().getId()))
+        if (clientOptional.isEmpty()|| !clientOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId()))
             return ApiResponse.<Order>builder().
                     message("Client not found!!!").
                     success(false).

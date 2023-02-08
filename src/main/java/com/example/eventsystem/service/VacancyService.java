@@ -46,7 +46,7 @@ public class VacancyService {
 
     public ApiResponse<Vacancy> getOne(Long id, Employee employee) {
         Optional<Vacancy> optionalVacancy = vacancyRepository.findById(id);
-        if (optionalVacancy.isEmpty() || !optionalVacancy.get().getBot().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (optionalVacancy.isEmpty() || !optionalVacancy.get().getBot().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Vacancy>builder().
                     message("Not Found").
                     status(400).
@@ -70,7 +70,7 @@ public class VacancyService {
         vacancy.setActive(vacancyDTO.isActive());
         if (botId != null){
             Optional<Bot> botOptional = botRepository.findById(botId);
-            if (botOptional.isEmpty() || !botOptional.get().getCompany().getId().equals(employee.getId())) {
+            if (botOptional.isEmpty() || !botOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
                 return ApiResponse.<List<Vacancy>>builder().
                         message("Bot not found").
                         status(400).
@@ -92,7 +92,7 @@ public class VacancyService {
     public ApiResponse<?> edit(VacancyDTO vacancyDTO, Long id, Employee employee) {
         Optional<Vacancy> optionalVacancy = vacancyRepository.findById(id);
 //        Optional<Vacancy> optionalCategory = categoryRepository.findById(productDTO.getCategoryId());
-        if (optionalVacancy.isEmpty() || !optionalVacancy.get().getBot().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (optionalVacancy.isEmpty() || !optionalVacancy.get().getBot().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     message("Vacancy Not Found").
                     status(400).
@@ -127,7 +127,7 @@ public class VacancyService {
 
     public ApiResponse<?> delete(Long id, Employee employee) {
         Optional<Vacancy> optionalVacancy = vacancyRepository.findById(id);
-        if (optionalVacancy.isEmpty() || optionalVacancy.get().getBot().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (optionalVacancy.isEmpty() || optionalVacancy.get().getBot().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     message("Vacancy Not Found").
                     status(400).
