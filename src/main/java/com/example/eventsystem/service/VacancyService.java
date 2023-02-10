@@ -6,9 +6,11 @@ import com.example.eventsystem.model.Bot;
 import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.model.Vacancy;
 import com.example.eventsystem.repository.BotRepository;
+import com.example.eventsystem.repository.DepartmentRepository;
 import com.example.eventsystem.repository.VacancyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,14 +22,15 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class VacancyService {
-//    @Value("${telegram.bot.id}")
-//    private Long botId;
+    @Value("${company.department.id}")
+    private Long departmentId;
 
     private final VacancyRepository vacancyRepository;
     private final BotRepository botRepository;
+    private final DepartmentRepository departmentRepository;
 
     public ApiResponse<List<Vacancy>> getAll(Employee employee) {
-        List<Vacancy> vacancies = vacancyRepository.findAllByActiveTrueAndBot_Company_Id(employee.getCompany().getId());
+        List<Vacancy> vacancies = vacancyRepository.findAllByActiveTrueAndDepartment_Company_Id(employee.getCompany().getId());
         if (vacancies.isEmpty()) {
             return ApiResponse.<List<Vacancy>>builder().
                     message("Not Found").
@@ -46,7 +49,7 @@ public class VacancyService {
 
     public ApiResponse<Vacancy> getOne(Long id, Employee employee) {
         Optional<Vacancy> optionalVacancy = vacancyRepository.findById(id);
-        if (optionalVacancy.isEmpty() || !optionalVacancy.get().getBot().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (optionalVacancy.isEmpty() || !optionalVacancy.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Vacancy>builder().
                     message("Not Found").
                     status(400).
@@ -77,7 +80,7 @@ public class VacancyService {
                         success(false).
                         build();
             }
-            vacancy.setBot(botRepository.findById(botId).get());
+            vacancy.setDepartment(departmentRepository.findById(departmentId).get());
         }
         vacancyRepository.save(vacancy);
 
@@ -92,7 +95,7 @@ public class VacancyService {
     public ApiResponse<?> edit(VacancyDTO vacancyDTO, Long id, Employee employee) {
         Optional<Vacancy> optionalVacancy = vacancyRepository.findById(id);
 //        Optional<Vacancy> optionalCategory = categoryRepository.findById(productDTO.getCategoryId());
-        if (optionalVacancy.isEmpty() || !optionalVacancy.get().getBot().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (optionalVacancy.isEmpty() || !optionalVacancy.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     message("Vacancy Not Found").
                     status(400).
@@ -127,7 +130,7 @@ public class VacancyService {
 
     public ApiResponse<?> delete(Long id, Employee employee) {
         Optional<Vacancy> optionalVacancy = vacancyRepository.findById(id);
-        if (optionalVacancy.isEmpty() || optionalVacancy.get().getBot().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+        if (optionalVacancy.isEmpty() || optionalVacancy.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     message("Vacancy Not Found").
                     status(400).

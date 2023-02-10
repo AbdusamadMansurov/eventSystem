@@ -25,4 +25,7 @@ public class WordHistory {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dateTime = LocalDateTime.now();
     private String word;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Department department;
 }

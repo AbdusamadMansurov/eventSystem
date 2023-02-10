@@ -24,7 +24,8 @@ public class SiteHistory {
     private String ipAddress, about;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dateTime = LocalDateTime.now();
-
+    @ManyToOne
+    private Site site;
     @ManyToOne
     private User user;
 }

@@ -39,5 +39,7 @@ public class Call {
     private List<ReviewCategory> ReviewCategory;
 
     private boolean success;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Department department;
 }

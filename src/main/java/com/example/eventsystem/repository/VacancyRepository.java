@@ -13,6 +13,6 @@ import java.util.List;
 public interface VacancyRepository extends JpaRepository<Vacancy, Long> {
 
     //    List<Vacancy> findAllByVacancyId(Long id);
-    List<Vacancy> findAllByActiveTrueAndBot_Company_Id(Long companyId);
+    List<Vacancy> findAllByActiveTrueAndDepartment_Company_Id(Long companyId);
 
 }
