@@ -28,5 +28,6 @@ public class BankInfo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @ToString.Exclude
     private Company company;
 }

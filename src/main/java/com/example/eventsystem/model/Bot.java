@@ -25,16 +25,16 @@ public class Bot {
     @OneToMany
     @ToString.Exclude
     private List<Employee> authorizedEmployees;
-    @OneToMany(mappedBy = "bot")
-    @ToString.Exclude
-    private List<User> userList;
-    @OneToMany
-    @ToString.Exclude
-    private List<Category> categories;
-
-    @OneToMany(mappedBy = "bot")
-    @ToString.Exclude
-    private List<Vacancy> vacancies;
+//    @OneToMany(mappedBy = "bot")
+//    @ToString.Exclude
+//    private List<User> userList;
+//    @OneToMany
+//    @ToString.Exclude
+//    private List<Category> categories;
+//
+//    @OneToMany(mappedBy = "bot")
+//    @ToString.Exclude
+//    private List<Vacancy> vacancies;
     @Column(nullable = false)
     private boolean active = true;
 

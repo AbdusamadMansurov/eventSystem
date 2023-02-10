@@ -38,4 +38,11 @@ public class Department {
     @JsonIgnore
     @ToString.Exclude
     private Company company;
+    @OneToMany(mappedBy = "department")
+    @ToString.Exclude
+    private List<Category> categories;
+
+    @OneToMany(mappedBy = "department")
+    @ToString.Exclude
+    private List<Vacancy> vacancies;
 }

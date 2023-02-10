@@ -68,10 +68,10 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Department department;
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Bot bot;
+//    @JsonIgnore
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @ToString.Exclude
+//    private Bot bot;
     private int count = 0;
     @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate brithDate;
@@ -86,18 +86,8 @@ public class User {
     @JsonIgnore
     @Enumerated(EnumType.STRING)
     private RegisteredType registeredType;
-    //    @GeneratedValue(generator = "UUID")
-//    @GenericGenerator(
-//            name = "UUID",
-//            strategy = "org.hibernate.id.UUIDGenerator",
-//            parameters = {
-//                    @org.hibernate.annotations.Parameter(
-//                            name = "uuid_gen_strategy_class",
-//                            value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
-//                    )
-//            }
-//    )
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     @Column(unique = true)
-    private UUID qrcode = UUID.randomUUID();
+    private UUID qrcode;
 }

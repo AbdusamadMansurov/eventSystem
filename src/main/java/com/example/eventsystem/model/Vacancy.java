@@ -23,7 +23,7 @@ public class Vacancy {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Bot bot;
+    private Department department;
     private boolean active;
 
 }
