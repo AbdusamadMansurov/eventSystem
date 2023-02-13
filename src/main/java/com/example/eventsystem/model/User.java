@@ -1,9 +1,6 @@
 package com.example.eventsystem.model;
 
-import com.example.eventsystem.model.enums.Gender;
-import com.example.eventsystem.model.enums.Language;
-import com.example.eventsystem.model.enums.RegisteredType;
-import com.example.eventsystem.model.enums.State;
+import com.example.eventsystem.model.enums.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
@@ -90,4 +87,6 @@ public class User {
     @JsonIgnore
     @Column(unique = true)
     private UUID qrcode;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 }

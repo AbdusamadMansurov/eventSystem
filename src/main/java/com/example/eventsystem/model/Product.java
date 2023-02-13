@@ -1,13 +1,6 @@
 package com.example.eventsystem.model;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Mansurov Abdusamad  *  30.11.2022  *  10:08   *  tedaSystem
@@ -34,7 +28,6 @@ public class Product {
     private Long id;
     @Column(columnDefinition = "text")
     private String nameUz, nameRu, nameEn, descriptionUz, descriptionRu, descriptionEn;
-
     @ManyToOne
     private Category category;
 
@@ -50,4 +43,7 @@ public class Product {
 
     @Builder.Default
     private boolean active = true;
+    @OneToMany
+    @ToString.Exclude
+    private List<User> speakers;
 }

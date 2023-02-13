@@ -3,16 +3,8 @@ package com.example.eventsystem.service;
 import com.example.eventsystem.dto.AddressDTO;
 import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.ProductDTO;
-import com.example.eventsystem.model.Address;
-import com.example.eventsystem.model.Attachment;
-import com.example.eventsystem.model.Category;
-import com.example.eventsystem.model.District;
-import com.example.eventsystem.model.Employee;
-import com.example.eventsystem.model.Product;
-import com.example.eventsystem.repository.AttachmentRepository;
-import com.example.eventsystem.repository.CategoryRepository;
-import com.example.eventsystem.repository.DistrictRepository;
-import com.example.eventsystem.repository.ProductRepository;
+import com.example.eventsystem.model.*;
+import com.example.eventsystem.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.MediaType;
@@ -33,6 +25,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final AttachmentRepository attachmentRepository;
     private final DistrictRepository districtRepository;
+    private final UserRepository userRepository;
 
     public ApiResponse<List<Product>> getAll(Employee employee) {
         List<Product> products = productRepository.findAllByActiveTrueAndCategory_Department_Company_Id(employee.getCompany().getId());
@@ -108,6 +101,19 @@ public class ProductService {
         product.setDescriptionRu(productDTO.getDescriptionRu());
         product.setDescriptionUz(productDTO.getDescriptionUz());
         product.setDescriptionEn(productDTO.getDescriptionEn());
+        if (productDTO.getSpeakersId() != null && !productDTO.getSpeakersId().isEmpty()) {
+            List<User> speakersList = userRepository.findAllById(productDTO.getSpeakersId());
+            for (User user : speakersList) {
+                if (!user.getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+                    return ApiResponse.builder().
+                            message("Speaker not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+            }
+            product.setSpeakers(speakersList);
+        }
 //        if (productDTO.getFrom() != null){
 //            if (LocalDateTime.now().isAfter(productDTO.getFrom())){
 //
@@ -115,7 +121,6 @@ public class ProductService {
 //        }
 
         productRepository.save(product);
-
         return ApiResponse.builder().
                 message("Saved").
                 status(200).
@@ -181,7 +186,19 @@ public class ProductService {
         product.setDescriptionEn(productDTO.getDescriptionEn());
         product.setPrice(productDTO.getPrice());
         product.setCategory(optionalCategory.get());
-
+        if (productDTO.getSpeakersId() != null && !productDTO.getSpeakersId().isEmpty()) {
+            List<User> speakersList = userRepository.findAllById(productDTO.getSpeakersId());
+            for (User user : speakersList) {
+                if (!user.getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+                    return ApiResponse.builder().
+                            message("Speaker not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+            }
+            product.setSpeakers(speakersList);
+        }
 
         productRepository.save(product);
 
