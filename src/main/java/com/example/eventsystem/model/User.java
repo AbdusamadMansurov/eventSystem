@@ -89,4 +89,6 @@ public class User {
     private UUID qrcode;
     @Enumerated(EnumType.STRING)
     private UserRole role;
-}
+
+    @Column(nullable = true)
+    private boolean resident = true;}

@@ -1,24 +1,24 @@
 server:
   port: 78
   ssl:
-    enabled: false
+    enabled: true
     certificate: /etc/letsencrypt/live/api.teda.uz/fullchain.pem
     certificate-private-key: /etc/letsencrypt/live/api.teda.uz/privkey.pem
 spring:
   datasource:
     #    url: jdbc:postgresql://185.185.80.245/eventSystems
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: 977515747
+    url: jdbc:postgresql://localhost:5432/eventSystems
+    username: admin
+    password: Turgun1970$
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     defer-datasource-initialization: true
   sql:
     init:
-      mode: always
+      mode: never
   mvc:
     servlet:
       path: /api
@@ -31,7 +31,7 @@ page:
 jwt:
   secretKey: turgun1970
   expireDate: 864000000
-debug: false
+debug: true
 company:
   department:
     id: 1

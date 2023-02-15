@@ -24,8 +24,9 @@ public class Site {
 
     private LocalDateTime dateTime = LocalDateTime.now();
 
-    @ManyToOne
     @JsonIgnore
-    private Company company;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Department department;
 
 }
