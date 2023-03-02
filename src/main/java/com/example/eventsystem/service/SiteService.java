@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -136,10 +137,13 @@ public class SiteService {
         Request request = requestOptional.get();
         request.setView(true);
         request.setEmployee(employee);
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText("Sizning " + request.getId() + " raqamli murojatingizni " + request.getEmployee().getFullName() + " qabul qildi.");
-        sendMessage.setChatId(request.getUser().getChatId());
-        telegramService.execute(sendMessage);
+        if (request.getUser().getChatId() != null) {
+            SendMessage sendMessage = new SendMessage();
+            sendMessage.setText("Sizning " + request.getId() + " raqamli murojatingizni " + request.getEmployee().getFullName() + " qabul qildi.");
+            sendMessage.setChatId(request.getUser().getChatId());
+            telegramService.execute(sendMessage);
+        }
+        request.setArrivalTime(LocalDateTime.now());
         requestRepository.save(request);
         return ApiResponse.<Request>builder().
                 message("Sent!!!").

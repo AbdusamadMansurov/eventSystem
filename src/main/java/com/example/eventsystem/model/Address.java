@@ -29,4 +29,9 @@ public class Address {
         this.district = district;
         this.streetHome = streetHome;
     }
+    public Address(District district, Country country, Region region) {
+        this.district = district;
+        this.country = country;
+        this.region = region;
+    }
 }

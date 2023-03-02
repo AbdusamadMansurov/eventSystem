@@ -69,6 +69,15 @@ public class Company {
 
     @OneToOne(cascade = CascadeType.ALL)
     private Attachment attachment;
+    private Double abortion;
+    private String INN;
+    @OneToMany
+    @ToString.Exclude
+    private List<WorkCategory> workCategoryList;
+
+    @OneToMany
+    @ToString.Exclude
+    private List<WorkType> workTypeList;
 
     public Company(Employee director) {
         this.director = director;

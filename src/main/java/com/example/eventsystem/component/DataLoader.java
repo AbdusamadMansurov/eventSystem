@@ -1,5 +1,6 @@
 package com.example.eventsystem.component;
 
+import com.example.eventsystem.ReadXLSX;
 import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.RoleType;
 import com.example.eventsystem.repository.*;
@@ -20,12 +21,10 @@ public class DataLoader implements CommandLineRunner {
     @Value("${spring.sql.init.mode}")
     private String runMode;
     private final EmployeeRepository employeeRepository;
-    private final CountryRepository countryRepository;
-    private final RegionRepository regionRepository;
-    private final DistrictRepository districtRepository;
     private final CompanyRepository companyRepository;
     private final PasswordEncoder passwordEncoder;
     private final BankInfoRepository bankInfoRepository;
+    private final ReadXLSX readXLSX;
 
     @Override
     public void run(String... args) {
@@ -64,6 +63,9 @@ public class DataLoader implements CommandLineRunner {
             bankInfos.add(bankInfo1);
             bankInfoRepository.saveAll(bankInfos);
 
+        }
+        if (runMode.equals("never")){
+            readXLSX.main();
         }
     }
 }
