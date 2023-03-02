@@ -17,6 +17,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.awt.image.ImageObserver.ERROR;
+import static java.sql.JDBCType.NUMERIC;
+import static javax.management.openmbean.SimpleType.BOOLEAN;
+import static javax.management.openmbean.SimpleType.STRING;
+import static org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfvoType.FORMULA;
+
 @RequiredArgsConstructor
 @Service
 public class ReadXLSX {
@@ -29,7 +35,7 @@ public class ReadXLSX {
     private final PasswordEncoder passwordEncoder;
 
     public void main() {
-        String filePath = "E:/downloads/Telegram Desktop/28_минг_туманга_ажратилгани_йўналиши_билан.xlsx";
+        String filePath = "C:/Users/User/Downloads/Telegram Desktop/28_минг_туманга_ажратилгани_йўналиши_билан.xlsx";
         try {
             FileInputStream fileInputStream = new FileInputStream(new File(filePath));
             XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
@@ -41,34 +47,60 @@ public class ReadXLSX {
                 String companyNameCell = "Корхона номи", innCell = "ИНН рақами", directorNameCell = "Раҳбарининг Ф.И.О", directorPhoneCell = "Телефон рақами",
                         districtNameCell = "шаҳар, туман номи", workCategoryCell = "ФАОЛИЯТ ТУРИ", workTypeCell = "Тармоқ йўналиши",
                         abortionCell = "2022 йил январ-август (8 ойлик) якуни бўйича Бюджетга тўлаган солиқ тушуми";
-                for (Cell cell : row) {
+//                for (Cell cell : row) {
+//
+////                    Cell celldata=(Cell) cell;
+////                    cell = (HSSFCell) cell;
+//                    companyName =
+//                    if (asd(cell).contains(companyNameCell)) {
+//                            companyName = asd(cell);
+//
+////                        companyName = cell.getStringCellValue();
+//                    }
+//                    if (asd(cell).contains(innCell)) {
+//                        inn = asd(cell);
+////                        inn = cell.getStringCellValue();
+//                    }
+//                    if (asd(cell).contains(directorPhoneCell)) {
+//                        directorPhone = asd(cell);
+////                        directorPhone = cell.getStringCellValue();
+//                    }
+//                    if (asd(cell).contains(districtNameCell)) {
+//                        districtName = asd(cell);
+////                        districtName = cell.getStringCellValue();
+//                    }
+//                    if (asd(cell).contains(workCategoryCell)) {
+//                        workCategory = asd(cell);
+////                        workCategory = cell.getStringCellValue();
+//                    }
+//                    if (asd(cell).contains(workTypeCell)) {
+//
+//                        workType = asd(cell);
+////                        workType = cell.getStringCellValue();
+//
+//                    }
+//                    if (asd(cell).contains(abortionCell)) {
+//                        abortion = asd(cell);
+////                        abortion = cell.getStringCellValue();
+//                    }
+//                    if (asd(cell).contains(districtNameCell)) {
+//                        directorName = asd(cell);
+////                        directorName = cell.getStringCellValue();
+//                    }
+//                    System.out.print(cell.getStringCellValue() + "\t");
+//                }
 
-                    if (cell.getStringCellValue().contains(companyNameCell)) {
-                        companyName = cell.getStringCellValue();
-                    }
-                    if (cell.getStringCellValue().contains(innCell)) {
-                        inn = cell.getStringCellValue();
-                    }
-                    if (cell.getStringCellValue().contains(directorPhoneCell)) {
-                        directorPhone = cell.getStringCellValue();
-                    }
-                    if (cell.getStringCellValue().contains(districtNameCell)) {
-                        districtName = cell.getStringCellValue();
-                    }
-                    if (cell.getStringCellValue().contains(workCategoryCell)) {
-                        workCategory = cell.getStringCellValue();
-                    }
-                    if (cell.getStringCellValue().contains(workTypeCell)) {
-                        workType = cell.getStringCellValue();
-                    }
-                    if (cell.getStringCellValue().contains(abortionCell)) {
-                        abortion = cell.getStringCellValue();
-                    }
-                    if (cell.getStringCellValue().contains(districtNameCell)) {
-                        directorName = cell.getStringCellValue();
-                    }
-                    System.out.print(cell.getStringCellValue() + "\t");
-                }
+                districtName = asd(row.getCell(1));
+                companyName = asd(row.getCell(2));
+                inn = asd(row.getCell(4));
+                workType = asd(row.getCell(5));
+                workCategory = asd(row.getCell(6));
+                abortion = asd(row.getCell(14));
+                directorName = asd(row.getCell(16));
+                directorPhone = asd(row.getCell(17));
+
+
+
                 Optional<District> districtOptional = districtRepository.findByName(districtName);
                 if (districtOptional.isEmpty()) {
                     continue;
@@ -120,6 +152,26 @@ public class ReadXLSX {
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+
+    }
+
+    private String asd(Cell cell) {
+        if(cell == null)
+            return null;
+        if (cell.equals(NUMERIC)) {
+            return String.valueOf(cell.getNumericCellValue());
+        } else if (cell.equals(STRING)) {
+            return cell.getStringCellValue();
+        } else if (cell.equals(ERROR)) {
+            return String.valueOf(cell.getErrorCellValue());
+        } else if (cell.equals(FORMULA)) {
+            return cell.getCellFormula();
+        }else if (cell.equals(BOOLEAN)) {
+            return cell.getCellFormula();
+        } else  {
+            return cell.toString();
         }
     }
 }
