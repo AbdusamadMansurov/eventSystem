@@ -46,10 +46,10 @@ public class ReadXLSX {
 //        System.err.println(file.length());
         try {
             InputStream inputStream = new FileInputStream(new File(filePath));
-            byte[] bytes = IOUtils.toByteArray(inputStream);
-            int read = inputStream.read();
-            File file = new File(filePath);
-            OPCPackage opcPkg = OPCPackage.open(filePath);
+//            byte[] bytes = IOUtils.toByteArray(inputStream);
+//            int read = inputStream.read();
+//            File file = new File(filePath);
+//            OPCPackage opcPkg = OPCPackage.open(filePath);
             XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 //            XSSFWorkbook workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.create(filePath));
 //            HSSFWorkbook wb = new HSSFWorkbook(fileInputStream);
