@@ -3,16 +3,21 @@ package com.example.eventsystem;
 import com.example.eventsystem.model.*;
 import com.example.eventsystem.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,11 +39,19 @@ public class ReadXLSX {
     private final DistrictRepository districtRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @SneakyThrows
     public void main() {
-        String filePath = "C:/Users/User/Downloads/Telegram Desktop/28_минг_туманга_ажратилгани_йўналиши_билан.xlsx";
+        String filePath = "src/main/resources/companys.xlsx";
+//        File file = new File("src/main/resources/companys.xlsx");
+//        System.err.println(file.length());
         try {
-            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
-            XSSFWorkbook workbook = new XSSFWorkbook(fileInputStream);
+            InputStream inputStream = new FileInputStream(new File(filePath));
+            byte[] bytes = IOUtils.toByteArray(inputStream);
+            int read = inputStream.read();
+            File file = new File(filePath);
+            OPCPackage opcPkg = OPCPackage.open(filePath);
+            XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+//            XSSFWorkbook workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.create(filePath));
 //            HSSFWorkbook wb = new HSSFWorkbook(fileInputStream);
             XSSFSheet sheet = workbook.getSheetAt(0); // get first sheet
 //            HSSFSheet sheetWB = wb.getSheetAt(0);
