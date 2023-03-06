@@ -1,6 +1,5 @@
 package com.example.eventsystem.component;
 
-import com.example.eventsystem.ReadXLSX;
 import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.RoleType;
 import com.example.eventsystem.repository.*;
@@ -29,7 +28,7 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) {
         System.err.print(runMode);
-        if (runMode.equals("always")) {
+        if (runMode.equals("sss")) {
 //            Country country = countryRepository.save(new Country("Uzbekistan", "UZB"));
 //            Region region = regionRepository.save(new Region("Tashkent", "Poytaxt", country));
 //            District district = districtRepository.save(new District("Yakkasaroy", region));
