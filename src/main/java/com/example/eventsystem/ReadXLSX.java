@@ -55,7 +55,9 @@ public class ReadXLSX {
 //            HSSFWorkbook wb = new HSSFWorkbook(fileInputStream);
             XSSFSheet sheet = workbook.getSheetAt(0); // get first sheet
 //            HSSFSheet sheetWB = wb.getSheetAt(0);
+            int count = 0;
             for (Row row : sheet) {
+                System.err.println("\n" + ++count + "\n");
                 String companyName = null, inn = null, directorName = null, directorPhone = null, districtName = null, workCategory = null, workType = null, abortion = null;
                 String companyNameCell = "Корхона номи", innCell = "ИНН рақами", directorNameCell = "Раҳбарининг Ф.И.О", directorPhoneCell = "Телефон рақами",
                         districtNameCell = "шаҳар, туман номи", workCategoryCell = "ФАОЛИЯТ ТУРИ", workTypeCell = "Тармоқ йўналиши",
@@ -111,17 +113,20 @@ public class ReadXLSX {
                 abortion = asd(row.getCell(14));
                 directorName = asd(row.getCell(16));
                 directorPhone = asd(row.getCell(17));
-
-
+                Optional<Company> companyOptional = companyRepository.findByINN(inn);
+                if (companyOptional.isPresent()) {
+                    continue;
+                }
+                Employee employee = new Employee();
+                if (directorPhone == null || directorPhone.equals("")){
+                    continue;
+                }
 
                 Optional<District> districtOptional = districtRepository.findByName(districtName);
                 if (districtOptional.isEmpty()) {
                     continue;
                 }
-                Optional<Company> companyOptional = companyRepository.findByINN(inn);
-                if (companyOptional.isPresent()) {
-                    continue;
-                }
+
                 District district = districtOptional.get();
                 Company company = new Company();
                 company.setName(companyName);
@@ -129,15 +134,19 @@ public class ReadXLSX {
                 company.setAbortion(Double.valueOf(Objects.requireNonNull(abortion)));
                 company.setINN(inn);
                 Company saveCompany = companyRepository.save(company);
-                Employee employee = new Employee();
                 employee.setCompany(saveCompany);
                 employee.setFullName(directorName);
                 employee.setPhoneFirst(directorPhone);
                 employee.setUsername(directorPhone);
                 employee.setPassword(passwordEncoder.encode(directorPhone));
-                Employee saveDirector = employeeRepository.save(employee);
-                saveCompany.setDirector(saveDirector);
-                companyRepository.save(company);
+                Optional<Employee> employeeOptional = employeeRepository.findByPhoneFirst(directorPhone);
+                if (employeeOptional.isPresent()){
+                    employee = employeeOptional.get();
+                }else {
+                    Employee saveDirector = employeeRepository.save(employee);
+                    saveCompany.setDirector(saveDirector);
+                    companyRepository.save(company);
+                }
                 if (workType != null) {
                     Optional<WorkType> workTypeOptional = workTypeRepository.findByName(workType);
                     if (workTypeOptional.isPresent()) {
@@ -171,7 +180,7 @@ public class ReadXLSX {
     }
 
     private String asd(Cell cell) {
-        if(cell == null)
+        if (cell == null)
             return null;
         if (cell.equals(NUMERIC)) {
             return String.valueOf(cell.getNumericCellValue());
@@ -181,9 +190,9 @@ public class ReadXLSX {
             return String.valueOf(cell.getErrorCellValue());
         } else if (cell.equals(FORMULA)) {
             return cell.getCellFormula();
-        }else if (cell.equals(BOOLEAN)) {
+        } else if (cell.equals(BOOLEAN)) {
             return cell.getCellFormula();
-        } else  {
+        } else {
             return cell.toString();
         }
     }

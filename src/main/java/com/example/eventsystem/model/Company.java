@@ -71,11 +71,11 @@ public class Company {
     private Attachment attachment;
     private Double abortion;
     private String INN;
-    @OneToMany
+    @ManyToMany
     @ToString.Exclude
     private List<WorkCategory> workCategoryList;
 
-    @OneToMany
+    @ManyToMany
     @ToString.Exclude
     private List<WorkType> workTypeList;
 
