@@ -4,13 +4,10 @@ import com.example.eventsystem.model.*;
 import com.example.eventsystem.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +35,8 @@ public class ReadXLSX {
     private final CompanyRepository companyRepository;
     private final DistrictRepository districtRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DepartmentRepository departmentRepository;
+    private final UserRepository userRepository;
 
     @SneakyThrows
     public void main() {
@@ -118,7 +117,7 @@ public class ReadXLSX {
                     continue;
                 }
                 Employee employee = new Employee();
-                if (directorPhone == null || directorPhone.equals("")){
+                if (directorPhone == null || directorPhone.equals("")) {
                     continue;
                 }
 
@@ -139,10 +138,18 @@ public class ReadXLSX {
                 employee.setPhoneFirst(directorPhone);
                 employee.setUsername(directorPhone);
                 employee.setPassword(passwordEncoder.encode(directorPhone));
+                Optional<User> userOptional = userRepository.findByPhoneAndDepartment_Id(directorPhone, 1L);
+                if (userOptional.isEmpty()) {
+                    User user = new User();
+                    user.setFullName(directorName);
+                    user.setPhone(directorPhone);
+                    user.setDepartment(departmentRepository.findById(1L).get());
+                    userRepository.save(user);
+                }
                 Optional<Employee> employeeOptional = employeeRepository.findByPhoneFirst(directorPhone);
-                if (employeeOptional.isPresent()){
+                if (employeeOptional.isPresent()) {
                     employee = employeeOptional.get();
-                }else {
+                } else {
                     Employee saveDirector = employeeRepository.save(employee);
                     saveCompany.setDirector(saveDirector);
                     companyRepository.save(company);
