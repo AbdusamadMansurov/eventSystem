@@ -1,7 +1,10 @@
 package com.example.eventsystem.service;
 
 import com.example.eventsystem.dto.ApiResponse;
+import com.example.eventsystem.model.Employee;
+import com.example.eventsystem.model.Product;
 import com.example.eventsystem.model.Request;
+import com.example.eventsystem.model.User;
 import com.example.eventsystem.repository.ProductRepository;
 import com.example.eventsystem.repository.RequestRepository;
 import com.example.eventsystem.repository.SiteHistoryRepository;
@@ -13,7 +16,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -68,5 +74,48 @@ public class RequestService {
                 success(true).
                 data(requestOptional.get()).
                 build();
+    }
+    public ApiResponse<?> edit(Long eventId, String qrcode, Employee employee) {
+        Optional<Product> productOptional = productRepository.findById(eventId);
+        if (productOptional.isEmpty() || !productOptional.get().getCategory().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.builder()
+                    .message("Event not found ")
+                    .status(400)
+                    .success(false)
+                    .build();
+        }
+        Optional<User> userOptional = userRepository.findByQrcode(UUID.fromString(qrcode));
+        if (userOptional.isEmpty()) {
+            return ApiResponse.builder()
+                    .message("User not found ")
+                    .status(400)
+                    .success(false)
+                    .build();
+        }
+        List<Request> requestList = requestRepository.findAllByProductAndUser(productOptional.get(), userOptional.get());
+        if (requestList.isEmpty()) {
+            return ApiResponse.builder()
+                    .message("User is not registered")
+                    .status(400)
+                    .success(false)
+                    .build();
+        }
+        Request request = requestList.get(0);
+        if (request.getArrivalTime() != null) {
+            return ApiResponse.builder()
+                    .message("User is registered")
+                    .status(200)
+                    .success(true)
+                    .data(request.getUser())
+                    .build();
+        }
+        request.setArrivalTime(LocalDateTime.now());
+        requestRepository.save(request);
+        return ApiResponse.builder()
+                .message("Success ")
+                .status(200)
+                .success(true)
+                .data(request.getUser())
+                .build();
     }
 }

@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Mansurov Abdusamad  *  24.11.2022  *  10:28   *  tedaUz
@@ -117,6 +119,34 @@ public class SiteService {
                 build();
     }
 
+    public ApiResponse<Request> addRequest(RequestDTO dto) {
+        Optional<User> userOptional = userRepository.findById(dto.getUserId());
+
+        if (userOptional.isEmpty()) {
+            return ApiResponse.<Request>builder().
+                    message("User not found!!!").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        Request request = new Request();
+        Optional<Product> productOptional = productRepository.findById(dto.getProductId());
+        productOptional.ifPresent(request::setProduct);
+
+        request.setRequestStatusType(RequestType.UNDER_REVIEW);
+        request.setUser(userOptional.get());
+        request.setAboutProduct(dto.getAboutProduct());
+        request.setCategory(dto.getCategory());
+        request.setAgree(dto.isAgree());
+        Request save = requestRepository.save(request);
+
+        return ApiResponse.<Request>builder().
+                message("Request accepted!!!").
+                success(true).
+                status(201).
+                data(save).
+                build();
+    }
     @SneakyThrows
     public ApiResponse<Request> editRequestStatus(Long id, Employee employee) {
         Optional<Request> requestOptional = requestRepository.findById(id);
@@ -153,31 +183,4 @@ public class SiteService {
 
     }
 
-    public ApiResponse<Request> addRequest(RequestDTO dto) {
-        Optional<User> userOptional = userRepository.findById(dto.getUserId());
-
-        if (userOptional.isEmpty()) {
-            return ApiResponse.<Request>builder().
-                    message("User not found!!!").
-                    success(false).
-                    status(400).
-                    build();
-        }
-        Request request = new Request();
-        Optional<Product> productOptional = productRepository.findById(dto.getProductId());
-        productOptional.ifPresent(request::setProduct);
-
-        request.setRequestStatusType(RequestType.UNDER_REVIEW);
-        request.setUser(userOptional.get());
-        request.setAboutProduct(dto.getAboutProduct());
-        request.setCategory(dto.getCategory());
-        Request save = requestRepository.save(request);
-
-        return ApiResponse.<Request>builder().
-                message("Request accepted!!!").
-                success(true).
-                status(201).
-                data(save).
-                build();
-    }
 }

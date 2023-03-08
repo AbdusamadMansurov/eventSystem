@@ -93,6 +93,12 @@ public class ProductService {
             address.setStreetHome(addressDTO.getStreetHome());
             product.setAddress(address);
         }
+        product.setAgreeTextEn(product.getAgreeTextEn());
+        product.setAgreeTextRu(product.getAgreeTextRu());
+        product.setAgreeTextUz(product.getAgreeTextUz());
+        product.setTextEn(product.getTextEn());
+        product.setTextRu(product.getTextRu());
+        product.setTextUz(product.getTextUz());
         product.setCategory(categoryOptional.get());
         product.setPrice(productDTO.getPrice());
         product.setNameRu(productDTO.getNameRu());
@@ -178,6 +184,12 @@ public class ProductService {
             address.setStreetHome(addressDTO.getStreetHome());
             product.setAddress(address);
         }
+        product.setAgreeTextEn(product.getAgreeTextEn());
+        product.setAgreeTextRu(product.getAgreeTextRu());
+        product.setAgreeTextUz(product.getAgreeTextUz());
+        product.setTextEn(product.getTextEn());
+        product.setTextRu(product.getTextRu());
+        product.setTextUz(product.getTextUz());
         product.setNameUz(productDTO.getNameUz());
         product.setNameRu(productDTO.getNameRu());
         product.setNameEn(productDTO.getNameEn());

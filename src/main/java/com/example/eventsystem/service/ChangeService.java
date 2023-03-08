@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class ChangeService {
     private final ChangeRepository changeRepository;
 
-    public void changeSaver (Employee employee, String column, String table, String oldData, String newData){
+    public void changeSaver(Employee employee, String table, String column, String oldData, String newData) {
         Change change = new Change();
         change.setEmployee(employee);
         change.setOldData(oldData);

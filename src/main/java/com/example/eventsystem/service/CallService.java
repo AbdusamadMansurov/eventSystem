@@ -259,7 +259,7 @@ public class CallService {
                     build();
         }
         Call call = callOptional.get();
-        if (!call.getCreatedTime().toLocalDate().equals(LocalDate.now()) && call.getEmployee() != employee && employee.getSelectedRole().toString().equals("OPERATOR")) {
+        if (!call.getCreatedTime().toLocalDate().equals(LocalDate.now()) && !Objects.equals(call.getEmployee().getId(), employee.getId()) && employee.getSelectedRole().toString().equals("OPERATOR")) {
             return ApiResponse.<Call>builder().
                     message("Time has passed. You can't change it now!!!").
                     status(400).

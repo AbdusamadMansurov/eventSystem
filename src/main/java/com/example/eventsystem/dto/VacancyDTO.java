@@ -14,5 +14,6 @@ public class VacancyDTO {
 
     private String name, description;
     private boolean active = true;
+    private Long departmentId;
 
 }

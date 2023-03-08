@@ -34,7 +34,8 @@ public class Department {
     @ToString.Exclude
     private List<User> clientList;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonIgnore
     @ToString.Exclude
     private Company company;

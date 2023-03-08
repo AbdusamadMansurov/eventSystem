@@ -2,7 +2,7 @@ package com.example.eventsystem.service;
 
 import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.VacancyDTO;
-import com.example.eventsystem.model.Bot;
+import com.example.eventsystem.model.Department;
 import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.model.Vacancy;
 import com.example.eventsystem.repository.BotRepository;
@@ -10,7 +10,6 @@ import com.example.eventsystem.repository.DepartmentRepository;
 import com.example.eventsystem.repository.VacancyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +21,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class VacancyService {
-    @Value("${company.department.id}")
-    private Long departmentId;
+//    @Value("${company.department.id}")
+//    private Long departmentId;
 
     private final VacancyRepository vacancyRepository;
     private final BotRepository botRepository;
@@ -65,23 +64,32 @@ public class VacancyService {
         }
     }
 
-    public ApiResponse<?> add(Long botId, VacancyDTO vacancyDTO, Employee employee) {
+    public ApiResponse<?> add(VacancyDTO vacancyDTO, Employee employee) {
 
         Vacancy vacancy = new Vacancy();
         vacancy.setName(vacancyDTO.getName());
         vacancy.setDescription(vacancyDTO.getDescription());
         vacancy.setActive(vacancyDTO.isActive());
-        if (botId != null){
-            Optional<Bot> botOptional = botRepository.findById(botId);
-            if (botOptional.isEmpty() || !botOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
-                return ApiResponse.<List<Vacancy>>builder().
-                        message("Bot not found").
-                        status(400).
-                        success(false).
-                        build();
-            }
-            vacancy.setDepartment(departmentRepository.findById(departmentId).get());
+//        if (botId != null){
+//            Optional<Bot> botOptional = botRepository.findById(botId);
+//            if (botOptional.isEmpty() || !botOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+//                return ApiResponse.<List<Vacancy>>builder().
+//                        message("Bot not found").
+//                        status(400).
+//                        success(false).
+//                        build();
+//            }
+//            vacancy.setDepartment(departmentRepository.findById(departmentId).get());
+//        }
+        Optional<Department> departmentOptional = departmentRepository.findById(vacancyDTO.getDepartmentId());
+        if (departmentOptional.isEmpty() || !departmentOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.builder().
+                    message("Department not found").
+                    status(400).
+                    success(false).
+                    build();
         }
+        vacancy.setDepartment(departmentOptional.get());
         vacancyRepository.save(vacancy);
 
         return ApiResponse.builder().
