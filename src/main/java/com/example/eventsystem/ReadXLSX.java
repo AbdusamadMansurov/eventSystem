@@ -5,6 +5,7 @@ import com.example.eventsystem.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -187,20 +188,28 @@ public class ReadXLSX {
     }
 
     private String asd(Cell cell) {
-        if (cell == null)
-            return null;
-        if (cell.equals(NUMERIC)) {
-            return String.valueOf(cell.getNumericCellValue());
-        } else if (cell.equals(STRING)) {
-            return cell.getStringCellValue();
-        } else if (cell.equals(ERROR)) {
-            return String.valueOf(cell.getErrorCellValue());
-        } else if (cell.equals(FORMULA)) {
-            return cell.getCellFormula();
-        } else if (cell.equals(BOOLEAN)) {
-            return cell.getCellFormula();
-        } else {
-            return cell.toString();
-        }
+        return String.valueOf(switch (cell.getCellType()) {
+            case FORMULA -> cell.getCellFormula();
+            case _NONE, BLANK -> "";
+            case NUMERIC -> (long)(cell.getNumericCellValue());
+            case BOOLEAN -> cell.getBooleanCellValue();
+            case ERROR -> cell.getErrorCellValue();
+            default -> cell.getStringCellValue();
+        });
+//        if (cell == null)
+//            return null;
+//        if (cell.getCellType().equals(CellType.NUMERIC)) {
+//            return String.valueOf(cell.getNumericCellValue());
+//        } else if (cell.getCellType().equals(STRING)) {
+//            return cell.getStringCellValue();
+//        } else if (cell.getCellType().equals(ERROR)) {
+//            return String.valueOf(cell.getErrorCellValue());
+//        } else if (cell.getCellType().equals(FORMULA)) {
+//            return cell.getCellFormula();
+//        } else if (cell.getCellType().equals(BOOLEAN)) {
+//            return cell.getCellFormula();
+//        } else {
+//            return cell.toString();
+//        }
     }
 }
