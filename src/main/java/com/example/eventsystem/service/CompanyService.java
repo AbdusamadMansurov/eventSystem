@@ -300,7 +300,7 @@ public class CompanyService {
         }
 
         Company company = companyOptional.get();
-        if (company != employee.getCompany()) {
+        if (company.getId() != employee.getCompany().getId()) {
             return ApiResponse.builder().
                     success(false).
                     status(400).

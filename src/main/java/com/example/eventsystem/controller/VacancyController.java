@@ -30,8 +30,8 @@ public class VacancyController {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestParam(required = false) Long botId, @RequestBody VacancyDTO vacancyDTO, @AuthenticationPrincipal Employee employee) {
-        ApiResponse<?> response = vacancyService.add(botId, vacancyDTO, employee);
+    public ResponseEntity<?> add( @RequestBody VacancyDTO vacancyDTO, @AuthenticationPrincipal Employee employee) {
+        ApiResponse<?> response = vacancyService.add(vacancyDTO, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

@@ -60,5 +60,9 @@ public class RequestController {
         ApiResponse<Request> response = siteService.addRequest(dto);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
-
+    @PatchMapping("/{eventId}")
+    public ResponseEntity<?> edit(@PathVariable Long eventId, @RequestParam String qrcode, @AuthenticationPrincipal Employee employee){
+        ApiResponse<?> response = requestService.edit(eventId, qrcode, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
 }
