@@ -82,7 +82,7 @@ public class BotService {
         }
         if (botList.isEmpty())
             return ApiResponse.<List<Bot>>builder().
-                    message("Bots not found by this company!!!").
+                    message("Bots   not found by this company!!!").
                     status(400).
                     success(false).
                     build();

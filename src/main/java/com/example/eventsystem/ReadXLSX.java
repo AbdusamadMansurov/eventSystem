@@ -5,26 +5,18 @@ import com.example.eventsystem.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import static java.awt.image.ImageObserver.ERROR;
-import static java.sql.JDBCType.NUMERIC;
-import static javax.management.openmbean.SimpleType.BOOLEAN;
-import static javax.management.openmbean.SimpleType.STRING;
-import static org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfvoType.FORMULA;
 
 @RequiredArgsConstructor
 @Service
@@ -45,7 +37,7 @@ public class ReadXLSX {
 //        File file = new File("src/main/resources/companys.xlsx");
 //        System.err.println(file.length());
         try {
-            InputStream inputStream = new FileInputStream(new File(filePath));
+            InputStream inputStream = new FileInputStream(filePath);
 //            byte[] bytes = IOUtils.toByteArray(inputStream);
 //            int read = inputStream.read();
 //            File file = new File(filePath);
@@ -56,7 +48,10 @@ public class ReadXLSX {
             XSSFSheet sheet = workbook.getSheetAt(0); // get first sheet
 //            HSSFSheet sheetWB = wb.getSheetAt(0);
             int count = 0;
+            int rowNum = 5400;
             for (Row row : sheet) {
+                row = sheet.getRow(rowNum);
+                rowNum++;
                 System.err.println("\n" + ++count + "\n");
                 String companyName = null, inn = null, directorName = null, directorPhone = null, districtName = null, workCategory = null, workType = null, abortion = null;
                 String companyNameCell = "Корхона номи", innCell = "ИНН рақами", directorNameCell = "Раҳбарининг Ф.И.О", directorPhoneCell = "Телефон рақами",
@@ -191,7 +186,7 @@ public class ReadXLSX {
         return String.valueOf(switch (cell.getCellType()) {
             case FORMULA -> cell.getCellFormula();
             case _NONE, BLANK -> "";
-            case NUMERIC -> (long)(cell.getNumericCellValue());
+            case NUMERIC -> (long) (cell.getNumericCellValue());
             case BOOLEAN -> cell.getBooleanCellValue();
             case ERROR -> cell.getErrorCellValue();
             default -> cell.getStringCellValue();

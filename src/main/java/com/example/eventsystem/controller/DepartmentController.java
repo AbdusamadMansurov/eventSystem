@@ -9,7 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -26,8 +29,21 @@ public class DepartmentController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> getOne(@PathVariable Long id, ){
-//        ApiResponse<Department> response = departmentService.getOne(id);
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getOne(@PathVariable Long id, @AuthenticationPrincipal Employee employee){
+        ApiResponse<Department> response = departmentService.getOne(id, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @PostMapping
+    public ResponseEntity<?> add(@RequestParam String name, @AuthenticationPrincipal Employee employee){
+        ApiResponse<Department> response = departmentService.add(name, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> edit(@PathVariable Long id , @RequestParam String name, @AuthenticationPrincipal Employee employee){
+        ApiResponse<Department> response = departmentService.edit(id, name, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
 }
