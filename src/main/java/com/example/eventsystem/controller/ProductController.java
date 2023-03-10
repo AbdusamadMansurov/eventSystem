@@ -35,6 +35,12 @@ public class ProductController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @GetMapping("/byCategory/{id}")
+    public ResponseEntity<?> getAllByCategory(Long id, @AuthenticationPrincipal Employee employee){
+        ApiResponse<List<Product>> response = productService.getAllByCategory(id,employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getOne(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
         ApiResponse<Product> response = productService.getOne(id, employee);
