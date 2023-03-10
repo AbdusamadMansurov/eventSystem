@@ -29,4 +29,6 @@ public class Site {
     @ToString.Exclude
     private Department department;
 
+    @Column(nullable = true)
+    private boolean active = true;
 }

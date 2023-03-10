@@ -7,13 +7,7 @@ import com.example.eventsystem.service.DepartmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,6 +38,12 @@ public class DepartmentController {
     @PutMapping("/{id}")
     public ResponseEntity<?> edit(@PathVariable Long id , @RequestParam String name, @AuthenticationPrincipal Employee employee){
         ApiResponse<Department> response = departmentService.edit(id, name, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id, @AuthenticationPrincipal Employee employee){
+        ApiResponse<?> response = departmentService.delete(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

@@ -23,11 +23,11 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     private Bot bot;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     private Site site;
     @OneToMany(mappedBy = "department")
@@ -46,4 +46,6 @@ public class Department {
     @OneToMany(mappedBy = "department")
     @ToString.Exclude
     private List<Vacancy> vacancies;
+    @Column(nullable = true)
+    private boolean active = true;
 }

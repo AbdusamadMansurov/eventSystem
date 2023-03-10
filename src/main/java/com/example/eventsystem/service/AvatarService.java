@@ -4,6 +4,7 @@ import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.AvatarDTO;
 import com.example.eventsystem.model.Attachment;
 import com.example.eventsystem.model.Avatar;
+import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.model.User;
 import com.example.eventsystem.repository.AvatarRepository;
 import com.example.eventsystem.repository.UserRepository;
@@ -33,9 +34,9 @@ public class AvatarService {
     private final AvatarRepository avatarRepository;
     private final UserRepository userRepository;
 
-    public ApiResponse<Page<Avatar>> getAll(int page) {
+    public ApiResponse<Page<Avatar>> getAll(int page, Employee employee) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Avatar> avatarPage = avatarRepository.findAll(pageable);
+        Page<Avatar> avatarPage = avatarRepository.findAllByUser_Department_Company_Id(employee.getCompany().getId(), pageable);
 
         if (avatarPage.isEmpty()) {
             return ApiResponse.<Page<Avatar>>builder().
@@ -52,9 +53,9 @@ public class AvatarService {
                 build();
     }
 
-    public ApiResponse<Avatar> getOne(Long id) {
+    public ApiResponse<Avatar> getOne(Long id, Employee employee) {
         Optional<Avatar> avatarOptional = avatarRepository.findById(id);
-        if (avatarOptional.isEmpty())
+        if (avatarOptional.isEmpty() || !avatarOptional.get().getUser().getDepartment().getCompany().getId().equals(employee.getCompany().getId()))
             return ApiResponse.<Avatar>builder().
                     message("Avatar not found!").
                     success(false).
@@ -71,9 +72,9 @@ public class AvatarService {
     }
 
     @SneakyThrows
-    public ApiResponse<Avatar> add(AvatarDTO dto) {
+    public ApiResponse<Avatar> add(AvatarDTO dto, Employee employee) {
         Optional<User> userOptional = userRepository.findById(dto.getUserId());
-        if (userOptional.isEmpty())
+        if (userOptional.isEmpty() || !userOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId()))
             return ApiResponse.<Avatar>builder().
                     message("User not found!").
                     success(false).
@@ -108,9 +109,9 @@ public class AvatarService {
     }
 
     @SneakyThrows
-    public ApiResponse<Avatar> edit(Long id, AvatarDTO dto) {
+    public ApiResponse<Avatar> edit(Long id, AvatarDTO dto, Employee employee) {
         Optional<Avatar> avatarOptional = avatarRepository.findById(id);
-        if (avatarOptional.isEmpty())
+        if (avatarOptional.isEmpty()|| !avatarOptional.get().getUser().getDepartment().getCompany().getId().equals(employee.getCompany().getId()))
             return ApiResponse.<Avatar>builder().
                     message("Avatar not found!").
                     success(false).

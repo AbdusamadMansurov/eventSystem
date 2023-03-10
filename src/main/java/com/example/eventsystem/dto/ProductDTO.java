@@ -1,9 +1,12 @@
 package com.example.eventsystem.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -21,7 +24,7 @@ public class ProductDTO {
     private Long categoryId;
     private AddressDTO address;
     private MultipartFile attachment;
-    private LocalDateTime from, to;
+    private String from, to;
     private Double price;
 
 }

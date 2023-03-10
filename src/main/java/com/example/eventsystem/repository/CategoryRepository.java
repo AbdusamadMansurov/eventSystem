@@ -11,5 +11,5 @@ import java.util.List;
  */
 @Repository
 public interface CategoryRepository extends JpaRepository<Category,Long> {
-    List<Category> findAllByDepartment_Bot_Id(Long botId);
+    List<Category> findAllByDepartment_Id(Long departmentId);
 }

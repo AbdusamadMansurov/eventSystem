@@ -58,4 +58,9 @@ public class EmployeeController {
         ApiResponse<?> response = employeeService.delete(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> editEvent(@PathVariable Long id, @AuthenticationPrincipal Employee employee){
+        ApiResponse<?> response = employeeService.editEvent(id, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
 }

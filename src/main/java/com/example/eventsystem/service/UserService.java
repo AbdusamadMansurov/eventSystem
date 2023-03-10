@@ -3,12 +3,10 @@ package com.example.eventsystem.service;
 import com.example.eventsystem.dto.AddressDTO;
 import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.UserDTO;
-import com.example.eventsystem.model.Address;
-import com.example.eventsystem.model.District;
-import com.example.eventsystem.model.Employee;
-import com.example.eventsystem.model.User;
+import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.Gender;
 import com.example.eventsystem.repository.DistrictRepository;
+import com.example.eventsystem.repository.ProductRepository;
 import com.example.eventsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
@@ -225,5 +222,6 @@ public class UserService {
                 data(users).
                 build();
     }
+
 
 }

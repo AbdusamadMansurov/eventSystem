@@ -1,26 +1,18 @@
 package com.example.eventsystem.service;
 
 import com.example.eventsystem.dto.ApiResponse;
-import com.example.eventsystem.dto.RequestDTO;
-import com.example.eventsystem.model.*;
-import com.example.eventsystem.model.enums.RequestType;
-import com.example.eventsystem.repository.ProductRepository;
-import com.example.eventsystem.repository.RequestRepository;
-import com.example.eventsystem.repository.SiteHistoryRepository;
-import com.example.eventsystem.repository.UserRepository;
+import com.example.eventsystem.dto.SiteDTO;
+import com.example.eventsystem.model.Department;
+import com.example.eventsystem.model.Employee;
+import com.example.eventsystem.model.Site;
+import com.example.eventsystem.repository.DepartmentRepository;
+import com.example.eventsystem.repository.SiteRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * @author Mansurov Abdusamad  *  24.11.2022  *  10:28   *  tedaUz
@@ -28,159 +20,113 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class SiteService {
-    @Value("${page.size}")
-    private int size;
+    private final SiteRepository siteRepository;
+    private final DepartmentRepository departmentRepository;
 
-    private final RequestRepository requestRepository;
-    private final SiteHistoryRepository siteHistoryRepository;
-    private final UserRepository userRepository;
-    private final ProductRepository productRepository;
-    private final TelegramService telegramService;
+    public ApiResponse<List<Site>> getAll(Employee employee) {
+        List<Site> siteList = siteRepository.findAllByDepartment_Company_Id(employee.getCompany().getId());
+        return ApiResponse.<List<Site>>builder().
+                message("Here").
+                success(true).
+                status(200).
+                data(siteList).
+                build();
+    }
 
-    public ApiResponse<Page<Request>> getRequest(int page, Boolean view) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Request> requests;
-
-        if (view == null)
-            requests = requestRepository.findAll(pageable);
-        else
-            requests = requestRepository.findAllByView(view, pageable);
-
-        if (requests.isEmpty()) {
-            return ApiResponse.<Page<Request>>builder().
-                    message("Requests not found !").
+    public ApiResponse<Site> getOne(Long id, Employee employee) {
+        Optional<Site> siteOptional = siteRepository.findById(id);
+        if (siteOptional.isEmpty() || !siteOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.<Site>builder().
+                    message("Not found!!!").
                     status(400).
                     success(false).
                     build();
         }
-        return ApiResponse.<Page<Request>>builder().
-                message("Requests here !").
+        return ApiResponse.<Site>builder().
+                message("Here").
                 status(200).
                 success(true).
-                data(requests).
+                data(siteOptional.get()).
                 build();
     }
 
-    public ApiResponse<Page<SiteHistory>> getSiteHistory(int page) {
-
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<SiteHistory> siteHistories = siteHistoryRepository.findAll(pageable);
-        if (siteHistories.isEmpty()) {
-            return ApiResponse.<Page<SiteHistory>>builder().
-                    message("History not found !").
+    public ApiResponse<Site> add(SiteDTO dto, Employee employee) {
+        Optional<Department> departmentOptional = departmentRepository.findById(dto.getDepartmentId());
+        if (departmentOptional.isEmpty() || !departmentOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.<Site>builder().
+                    message("Department not found!!!").
                     status(400).
                     success(false).
                     build();
         }
-        return ApiResponse.<Page<SiteHistory>>builder().
-                message("History here !").
-                status(200).
-                success(true).
-                data(siteHistories).
-                build();
-    }
-
-    public ApiResponse<Request> getOneRequest(Long id) {
-        Optional<Request> requestOptional = requestRepository.findById(id);
-
-        if (requestOptional.isEmpty()) {
-            return ApiResponse.<Request>builder().
-                    message("Requests not found !").
-                    status(400).
-                    success(false).
-                    build();
-        }
-        return ApiResponse.<Request>builder().
-                message("Requests here !").
-                status(200).
-                success(true).
-                data(requestOptional.get()).
-                build();
-    }
-
-    public ApiResponse<SiteHistory> getOneSiteHistory(Long id) {
-        Optional<SiteHistory> historyOptional = siteHistoryRepository.findById(id);
-
-        if (historyOptional.isEmpty()) {
-            return ApiResponse.<SiteHistory>builder().
-                    message("History not found !").
-                    status(400).
-                    success(false).
-                    build();
-        }
-
-        return ApiResponse.<SiteHistory>builder().
-                message("History not found !").
-                status(400).
-                success(false).
-                data(historyOptional.get()).
-                build();
-    }
-
-    public ApiResponse<Request> addRequest(RequestDTO dto) {
-        Optional<User> userOptional = userRepository.findById(dto.getUserId());
-
-        if (userOptional.isEmpty()) {
-            return ApiResponse.<Request>builder().
-                    message("User not found!!!").
-                    success(false).
-                    status(400).
-                    build();
-        }
-        Request request = new Request();
-        Optional<Product> productOptional = productRepository.findById(dto.getProductId());
-        productOptional.ifPresent(request::setProduct);
-
-        request.setRequestStatusType(RequestType.UNDER_REVIEW);
-        request.setUser(userOptional.get());
-        request.setAboutProduct(dto.getAboutProduct());
-        request.setCategory(dto.getCategory());
-        request.setAgree(dto.isAgree());
-        Request save = requestRepository.save(request);
-
-        return ApiResponse.<Request>builder().
-                message("Request accepted!!!").
-                success(true).
+        Department department = departmentOptional.get();
+        Site site = new Site();
+        site.setName(dto.getName());
+        site.setLink(dto.getLink());
+        site.setDescription(dto.getDescription());
+        site.setDepartment(department);
+        Site save = siteRepository.save(site);
+        department.setSite(save);
+        departmentRepository.save(department);
+        return ApiResponse.<Site>builder().
+                message("Saved!!!").
                 status(201).
+                success(true).
                 data(save).
                 build();
     }
-    @SneakyThrows
-    public ApiResponse<Request> editRequestStatus(Long id, Employee employee) {
-        Optional<Request> requestOptional = requestRepository.findById(id);
-        if (requestOptional.isEmpty()) {
-            return ApiResponse.<Request>builder().
-                    message("Request id not found !").
-                    status(400).
-                    success(false).
-                    build();
-        }
 
-        if (employee == null)
-            return ApiResponse.<Request>builder().
-                    message("Employee not found !").
+    public ApiResponse<Site> edit(Long id, SiteDTO dto, Employee employee) {
+        Optional<Department> departmentOptional = departmentRepository.findById(dto.getDepartmentId());
+        if (departmentOptional.isEmpty() || !departmentOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.<Site>builder().
+                    message("Department not found!!!").
                     status(400).
                     success(false).
                     build();
-        Request request = requestOptional.get();
-        request.setView(true);
-        request.setEmployee(employee);
-        if (request.getUser().getChatId() != null) {
-            SendMessage sendMessage = new SendMessage();
-            sendMessage.setText("Sizning " + request.getId() + " raqamli murojatingizni " + request.getEmployee().getFullName() + " qabul qildi.");
-            sendMessage.setChatId(request.getUser().getChatId());
-            telegramService.execute(sendMessage);
         }
-        request.setArrivalTime(LocalDateTime.now());
-        requestRepository.save(request);
-        return ApiResponse.<Request>builder().
-                message("Sent!!!").
+        Optional<Site> siteOptional = siteRepository.findById(id);
+        Department department = departmentOptional.get();
+        if (siteOptional.isEmpty() || !department.getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.<Site>builder().
+                    message("Site not found!!!").
+                    status(400).
+                    success(false).
+                    build();
+        }
+        Site site = siteOptional.get();
+        site.setName(dto.getName());
+        site.setLink(dto.getLink());
+        site.setDescription(dto.getDescription());
+        site.setDepartment(department);
+        Site save = siteRepository.save(site);
+        department.setSite(save);
+        departmentRepository.save(department);
+        return ApiResponse.<Site>builder().
+                message("Saved!!!").
+                status(201).
                 success(true).
-                status(200).
+                data(save).
                 build();
-
     }
 
+    public ApiResponse<Site> delete(Long id, Employee employee) {
+        Optional<Site> siteOptional = siteRepository.findById(id);
+        if (siteOptional.isEmpty() || !siteOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.<Site>builder().
+                    message("Site not found!!!").
+                    status(400).
+                    success(false).
+                    build();
+        }
+
+        Site site = siteOptional.get();
+        site.setActive(false);
+        siteRepository.save(site);
+        return ApiResponse.<Site>builder().
+                message("Deleted!!!").
+                status(200).
+                success(true).
+                build();
+    }
 }

@@ -57,6 +57,9 @@ public class Employee implements UserDetails {
     @Enumerated(EnumType.STRING)
     private RoleType selectedRole;
 
+    @ManyToOne
+    private Product product;
+
         @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(selectedRole.name()));

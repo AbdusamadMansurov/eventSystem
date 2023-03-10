@@ -3,14 +3,12 @@ package com.example.eventsystem.service;
 import com.example.eventsystem.dto.AddressDTO;
 import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.EmployeeDTO;
-import com.example.eventsystem.model.Address;
-import com.example.eventsystem.model.Company;
-import com.example.eventsystem.model.District;
-import com.example.eventsystem.model.Employee;
+import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.RoleType;
 import com.example.eventsystem.repository.CompanyRepository;
 import com.example.eventsystem.repository.DistrictRepository;
 import com.example.eventsystem.repository.EmployeeRepository;
+import com.example.eventsystem.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -35,6 +33,7 @@ public class EmployeeService {
     private final CompanyRepository companyRepository;
     private final DistrictRepository districtRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ProductRepository productRepository;
 
     public ApiResponse<Page<Employee>> getAll(int page, Boolean active, Employee employee) {
         Pageable pageable = PageRequest.of(page, size);
@@ -264,6 +263,23 @@ public class EmployeeService {
                 success(true).
                 status(200).
                 data(employeePage).
+                build();
+    }
+    public ApiResponse<?> editEvent(Long id, Employee employee) {
+        Optional<Product> productOptional = productRepository.findByIdAndCategory_Department_Company_Id(id, employee.getCompany().getId());
+        if (productOptional.isEmpty()){
+            return ApiResponse.builder().
+                    message("Event not found!!!").
+                    status(400).
+                    success(false).
+                    build();
+        }
+        employee.setProduct(productOptional.get());
+        return ApiResponse.builder().
+                message("Success edited!!!").
+                status(200).
+                success(true).
+                data(employeeRepository.save(employee)).
                 build();
     }
 }

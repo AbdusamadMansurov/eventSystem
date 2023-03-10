@@ -8,7 +8,6 @@ import com.example.eventsystem.model.Payment;
 import com.example.eventsystem.model.enums.PaymentType;
 import com.example.eventsystem.repository.OrderRepository;
 import com.example.eventsystem.repository.PaymentRepository;
-import com.example.eventsystem.repository.RegionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -29,11 +28,9 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-    private final RegionRepository regionRepository;
-
-    public ApiResponse<Page<Payment>> getAll(int page) {
+    public ApiResponse<Page<Payment>> getAll(int page, Employee employee) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Payment> paymentPage = paymentRepository.findAll(pageable);
+        Page<Payment> paymentPage = paymentRepository.findAllByReceiver_Company_Id(employee.getCompany().getId(), pageable);
 
         if (paymentPage.isEmpty()) {
             return ApiResponse.<Page<Payment>>builder().
@@ -50,9 +47,9 @@ public class PaymentService {
                 build();
     }
 
-    public ApiResponse<Payment> getOne(Long id) {
+    public ApiResponse<Payment> getOne(Long id, Employee employee) {
         Optional<Payment> paymentOptional = paymentRepository.findById(id);
-        if (paymentOptional.isEmpty()) {
+        if (paymentOptional.isEmpty() || paymentOptional.get().getReceiver().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Payment>builder().
                     message("Payment not found!!!").
                     success(false).
@@ -71,19 +68,13 @@ public class PaymentService {
 
     public ApiResponse<Payment> add(PaymentDTO dto, Employee receiver) {
         Optional<Order> orderOptional = orderRepository.findById(dto.getOrderId());
-        if (orderOptional.isEmpty()) {
+        if (orderOptional.isEmpty() || orderOptional.get().getReceiver().getCompany().getId().equals(receiver.getCompany().getId())) {
             return ApiResponse.<Payment>builder().
                     message("Order not found!!!").
                     success(false).
                     status(400).
                     build();
         }
-        if (receiver == null)
-            return ApiResponse.<Payment>builder().
-                    message("Employee not found!!!").
-                    success(false).
-                    status(400).
-                    build();
 
         Payment payment = new Payment();
         payment.setPaymentDate(dto.getPaymentDate());
@@ -102,10 +93,10 @@ public class PaymentService {
                 build();
     }
 
-    public ApiResponse<?> delete(Long id) {
+    public ApiResponse<?> delete(Long id, Employee employee) {
         Optional<Payment> paymentOptional = paymentRepository.findById(id);
 
-        if (paymentOptional.isEmpty()) {
+        if (paymentOptional.isEmpty() || !paymentOptional.get().getReceiver().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     message("Payment not found!!!").
                     success(false).
