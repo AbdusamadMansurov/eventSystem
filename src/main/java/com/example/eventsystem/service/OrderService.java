@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -84,7 +85,7 @@ public class OrderService {
         Optional<User> clientOptional = userRepository.findById(dto.getClientId());
         Optional<Product> productOptional = productRepository.findById(dto.getProductId());
 
-        if (clientOptional.isEmpty()|| !clientOptional.get().getDepartment().getCompany().getId().equals(receiver.getCompany().getId()))
+        if (clientOptional.isEmpty() || !clientOptional.get().getDepartment().getCompany().getId().equals(receiver.getCompany().getId()))
             return ApiResponse.<Order>builder().
                     message("Client not found!!!").
                     success(false).
@@ -133,7 +134,7 @@ public class OrderService {
         Optional<Employee> receiverOptional = employeeRepository.findById(dto.getReceiverId());
         Optional<Product> productOptional = productRepository.findById(dto.getProductId());
 
-        if (clientOptional.isEmpty()|| !clientOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId()))
+        if (clientOptional.isEmpty() || !clientOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId()))
             return ApiResponse.<Order>builder().
                     message("Client not found!!!").
                     success(false).
@@ -162,12 +163,13 @@ public class OrderService {
         order.setPrice(dto.getPrice());
         if (dto.getEmployeeId() != null) {
             Optional<Employee> employeeOptional = employeeRepository.findById(dto.getEmployeeId());
-            if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId()))
+            if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
                 return ApiResponse.<Order>builder().
                         message("Employee not found!!!").
                         success(false).
                         status(400).
                         build();
+            }
             order.setEmployee(employeeOptional.get());
         }
         order.setClient(clientOptional.get());
@@ -184,6 +186,60 @@ public class OrderService {
                 success(true).
                 status(200).
                 data(save).
+                build();
+    }
+
+    public ApiResponse<List<Order>> getAllByClient(Long clientId, Employee employee) {
+        Optional<User> userOptional = userRepository.findById(clientId);
+        if (userOptional.isEmpty() || !userOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.<List<Order>>builder().
+                    message("Client not found!!!").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        List<Order> orderList = orderRepository.findAllByClient(userOptional.get());
+        return ApiResponse.<List<Order>>builder().
+                message("Here!!!").
+                status(200).
+                success(true).
+                data(orderList).
+                build();
+    }
+
+    public ApiResponse<List<Order>> getAllByEmployee(Long employeeId, Employee employee) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+        if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.<List<Order>>builder().
+                    message("Employee not found!!!").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        List<Order> orderList = orderRepository.findAllByEmployee(employeeOptional.get());
+        return ApiResponse.<List<Order>>builder().
+                message("Here!!!").
+                status(200).
+                success(true).
+                data(orderList).
+                build();
+    }
+
+    public ApiResponse<List<Order>> getAllByReceiver(Long receiverId, Employee employee) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(receiverId);
+        if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.<List<Order>>builder().
+                    message("Employee not found!!!").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        List<Order> orderList = orderRepository.findAllByReceiver(employeeOptional.get());
+        return ApiResponse.<List<Order>>builder().
+                message("Here!!!").
+                status(200).
+                success(true).
+                data(orderList).
                 build();
     }
 }

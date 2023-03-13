@@ -1,9 +1,14 @@
 package com.example.eventsystem.component;
 
+import com.example.eventsystem.model.User;
+import com.example.eventsystem.repository.CompanyRepository;
+import com.example.eventsystem.repository.EmployeeRepository;
+import com.example.eventsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
 
 
 @Component
@@ -11,6 +16,9 @@ import org.springframework.stereotype.Component;
 public class DataLoader implements CommandLineRunner {
     @Value("${spring.sql.init.mode}")
     private String runMode;
+    private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
 
     @Override
     public void run(String... args) {
@@ -49,5 +57,21 @@ public class DataLoader implements CommandLineRunner {
 //            bankInfos.add(bankInfo1);
 //            bankInfoRepository.saveAll(bankInfos);
 //        }
+        if (runMode.equals("never")) {
+//            List<Company> companies = companyRepository.findAll();
+//            for (Company company : companies) {
+//                Employee director = company.getDirector();
+//                if (director != null && company.getAddress() != null) {
+//                    director.setAddress(company.getAddress());
+//                    Optional<User> userOptional = userRepository.findByPhone(director.getPhoneFirst());
+//                    if (userOptional.isEmpty())
+//                        continue;
+//                    User user = userOptional.get();
+//                    user.setAddress(company.getAddress());
+//                    employeeRepository.save(director);
+//                    userRepository.save(user);
+//                }
+        }
     }
 }
+

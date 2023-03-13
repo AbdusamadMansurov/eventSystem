@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author Mansurov Abdusamad  *  14.12.2022  *  10:14   *  tedaSystem
  */
@@ -31,6 +33,23 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getOne(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
         ApiResponse<Order> response = orderService.getOne(id, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/getAllByClient")
+    public ResponseEntity<?> getAllByClient(@RequestParam Long clientId, @AuthenticationPrincipal Employee employee){
+        ApiResponse<List<Order>> response = orderService.getAllByClient(clientId, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/getAllByEmployee")
+    public ResponseEntity<?> getAllByEmployee(@RequestParam Long employeeId, @AuthenticationPrincipal Employee employee){
+        ApiResponse<List<Order>> response = orderService.getAllByEmployee(employeeId, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+    @GetMapping("/getAllByReceiver")
+    public ResponseEntity<?> getAllByReceiver(@RequestParam Long receiverId, @AuthenticationPrincipal Employee employee){
+        ApiResponse<List<Order>> response = orderService.getAllByReceiver(receiverId, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
