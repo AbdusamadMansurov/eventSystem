@@ -54,7 +54,7 @@ public class Employee implements UserDetails {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<RoleType> roles;
-    @JsonIgnore
+//    @JsonIgnore
     @Enumerated(EnumType.STRING)
     private RoleType selectedRole;
 
