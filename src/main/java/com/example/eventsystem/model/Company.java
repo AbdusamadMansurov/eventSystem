@@ -30,6 +30,7 @@ public class Company {
     private Address address;
     @OneToMany(mappedBy = "company")
     @ToString.Exclude
+    @JsonIgnore
     private List<BankInfo> bankInfo;
     @ManyToOne
     @JsonIgnore
