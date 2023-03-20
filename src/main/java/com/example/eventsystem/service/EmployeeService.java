@@ -43,7 +43,7 @@ public class EmployeeService {
         else if (Boolean.FALSE.equals(active))
             employeePage = employeeRepository.findAllByActiveFalseAndCompany_Id(employee.getCompany().getId(), pageable);
         else
-            employeePage = employeeRepository.findAll(pageable);
+            employeePage = employeeRepository.findAllByCompany_Id(employee.getCompany().getId(),pageable);
 
         if (employeePage.isEmpty())
             return ApiResponse.<Page<Employee>>builder().

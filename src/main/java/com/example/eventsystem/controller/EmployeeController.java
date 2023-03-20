@@ -22,7 +22,7 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page,
-                                    @RequestParam Boolean active,
+                                    @RequestParam(required = false) Boolean active,
                                     @AuthenticationPrincipal Employee employee) {
         ApiResponse<Page<Employee>> response = employeeService.getAll(page, active, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
