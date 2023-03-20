@@ -33,7 +33,7 @@ public class Company {
     @JsonIgnore
     private List<BankInfo> bankInfo;
     @ManyToOne
-    @JsonIgnore
+//    @JsonIgnore
     private Employee director;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime registeredTime = LocalDateTime.now();
@@ -48,6 +48,7 @@ public class Company {
 //    private List<Site> siteList;
     @ManyToMany()
     @ToString.Exclude
+    @JsonIgnore
     private List<Department> departmentList;
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -62,10 +63,12 @@ public class Company {
     private String INN;
     @ManyToMany
     @ToString.Exclude
+    @JsonIgnore
     private List<WorkCategory> workCategoryList;
 
     @ManyToMany
     @ToString.Exclude
+    @JsonIgnore
     private List<WorkType> workTypeList;
 
     public Company(Employee director) {
