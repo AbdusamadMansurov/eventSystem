@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Mansurov Abdusamad  *  30.11.2022  *  10:35   *  tedaSystem
@@ -53,17 +54,24 @@ public class Employee implements UserDetails {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<RoleType> roles;
-
+    @JsonIgnore
     @Enumerated(EnumType.STRING)
     private RoleType selectedRole;
 
     @ManyToOne
     private Product product;
 
-        @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(selectedRole.name()));
-    }
+//        @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return Collections.singleton(new SimpleGrantedAuthority(selectedRole.name()));
+//    }
+@Override
+public Collection<? extends GrantedAuthority> getAuthorities() {
+    return roles
+            .stream()
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toString()))
+            .collect(Collectors.toList());
+}
     @JsonIgnore
     private boolean accountNonExpired = true, accountNonLocked = true, credentialsNonExpired = true;
     private boolean enabled = true;
@@ -74,18 +82,24 @@ public class Employee implements UserDetails {
         this.roles = roles;
     }
 
-    public Employee(String username, String password, Set<RoleType> roles, RoleType selectedRole) {
-        this.username = username;
-        this.password = password;
-        this.roles = roles;
-        this.selectedRole = selectedRole;
-    }
+//    public Employee(String username, String password, Set<RoleType> roles, RoleType selectedRole) {
+//        this.username = username;
+//        this.password = password;
+//        this.roles = roles;
+//        this.selectedRole = selectedRole;
+//    }
 
-    public Employee(String username, String password, Set<RoleType> roles, RoleType selectedRole, String phoneFirst) {
+    public Employee(String username, String password, Set<RoleType> roles, String phoneFirst) {
         this.username = username;
         this.password = password;
         this.roles = roles;
-        this.selectedRole = selectedRole;
         this.phoneFirst = phoneFirst;
     }
+//    public Employee(String username, String password, Set<RoleType> roles, RoleType selectedRole, String phoneFirst) {
+//        this.username = username;
+//        this.password = password;
+//        this.roles = roles;
+//        this.selectedRole = selectedRole;
+//        this.phoneFirst = phoneFirst;
+//    }
 }

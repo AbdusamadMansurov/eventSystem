@@ -2,6 +2,7 @@ package com.example.eventsystem.model;
 
 import com.example.eventsystem.model.enums.ActiveTypes;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,7 @@ public class Company {
     @ToString.Exclude
     private List<BankInfo> bankInfo;
     @ManyToOne
+    @JsonIgnore
     private Employee director;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime registeredTime = LocalDateTime.now();
@@ -46,7 +48,8 @@ public class Company {
     @ManyToMany()
     @ToString.Exclude
     private List<Department> departmentList;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
     @ToString.Exclude
     private List<Employee> employees;
     @Builder.Default

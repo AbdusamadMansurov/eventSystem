@@ -134,21 +134,21 @@ public class UserService {
                     build();
         }
         User user = userOptional.get();
-        if (!user.getUsername().equals(dto.getUsername())) {
-            changeService.changeSaver(employee, "user", "username", user.getUsername(), dto.getUsername());
-        }
-        if (!user.getFullName().equals(dto.getFullName())) {
-            changeService.changeSaver(employee, "user", "fullName", user.getFullName(), dto.getFullName());
-        }
-        if (!user.getEmail().equals(dto.getEmail())) {
-            changeService.changeSaver(employee, "user", "email", user.getEmail(), dto.getEmail());
-        }
-        if (!user.getPassportNumber().equals(dto.getPassportNumber())) {
-            changeService.changeSaver(employee, "user", "passportNumber", user.getPassportNumber(), dto.getPassportNumber());
-        }
-        if (!user.getBrithDate().equals(dto.getBrithDate())) {
-            changeService.changeSaver(employee, "user", "brithDate", user.getBrithDate().toString(), dto.getBrithDate().toString());
-        }
+//        if (!user.getUsername().equals(dto.getUsername())) {
+//            changeService.changeSaver(employee, "user", "username", user.getUsername(), dto.getUsername());
+//        }
+//        if (!user.getFullName().equals(dto.getFullName())) {
+//            changeService.changeSaver(employee, "user", "fullName", user.getFullName(), dto.getFullName());
+//        }
+//        if (!user.getEmail().equals(dto.getEmail())) {
+//            changeService.changeSaver(employee, "user", "email", user.getEmail(), dto.getEmail());
+//        }
+//        if (!user.getPassportNumber().equals(dto.getPassportNumber())) {
+//            changeService.changeSaver(employee, "user", "passportNumber", user.getPassportNumber(), dto.getPassportNumber());
+//        }
+//        if (!user.getBrithDate().equals(dto.getBrithDate())) {
+//            changeService.changeSaver(employee, "user", "brithDate", user.getBrithDate().toString(), dto.getBrithDate().toString());
+//        }
         user.setFullName(dto.getFullName());
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
