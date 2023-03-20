@@ -33,7 +33,7 @@ public class Company {
     @JsonIgnore
     private List<BankInfo> bankInfo;
     @ManyToOne
-//    @JsonIgnore
+    @JsonIgnore
     private Employee director;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime registeredTime = LocalDateTime.now();
