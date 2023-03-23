@@ -43,6 +43,7 @@ public class Employee implements UserDetails {
     private String chatId;
 
     @ManyToOne
+    @JsonIgnore
     private Company company;
 
     @ManyToOne(cascade = CascadeType.ALL)
