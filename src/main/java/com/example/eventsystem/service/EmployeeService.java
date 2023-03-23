@@ -243,9 +243,9 @@ public class EmployeeService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Employee> employeePage;
 
-        if (active)
+        if (active.equals(Boolean.TRUE))
             employeePage = employeeRepository.findAllByActiveTrueAndCompany_Id(companyId, pageable);
-        if (!active)
+        if (active.equals(Boolean.FALSE))
             employeePage = employeeRepository.findAllByActiveFalseAndCompany_Id(companyId, pageable);
         else
             employeePage = employeeRepository.findAllByCompany_Id(companyId, pageable);
