@@ -30,7 +30,7 @@ public class EmployeeController {
 
     @GetMapping("/getAllByCompany")
     public ResponseEntity<?> getAllByCompany(@RequestParam(defaultValue = "0") int page,
-                                             @RequestParam Boolean active, @AuthenticationPrincipal Employee employee) {
+                                             @RequestParam(defaultValue = "null") Boolean active, @AuthenticationPrincipal Employee employee) {
         ApiResponse<Page<Employee>> response = employeeService.getAllByCompany( page, active, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
