@@ -231,7 +231,7 @@ public class EmployeeService {
     }
 
     public ApiResponse<Page<Employee>> getAllByCompany(int page, Boolean active, Employee employee) {
-        Long companyId = employee.getId();
+        Long companyId = employee.getCompany().getId();
         Optional<Company> companyOptional = companyRepository.findById(companyId);
         if (companyOptional.isEmpty()) {
             return ApiResponse.<Page<Employee>>builder().
