@@ -18,7 +18,7 @@ public class UserDTO {
     private String username, fullName, email, passportNumber;
 
     private String genderType;
-
+    private Long departmentId;
     private List<String> userRoles;
 
     private AddressDTO addressDTO;

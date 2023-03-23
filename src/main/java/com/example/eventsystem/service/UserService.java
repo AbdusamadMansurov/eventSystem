@@ -5,8 +5,8 @@ import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.UserDTO;
 import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.Gender;
+import com.example.eventsystem.repository.DepartmentRepository;
 import com.example.eventsystem.repository.DistrictRepository;
-import com.example.eventsystem.repository.ProductRepository;
 import com.example.eventsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final DistrictRepository districtRepository;
     private final ChangeService changeService;
+    private final DepartmentRepository departmentRepository;
 
     public ApiResponse<Page<User>> getAll(int page, Employee employee, Boolean active) {
 
@@ -87,6 +88,15 @@ public class UserService {
         user.setEmail(dto.getEmail());
         user.setPassportNumber(dto.getPassportNumber());
         user.setBrithDate(dto.getBrithDate());
+        Optional<Department> departmentOptional = departmentRepository.findById(dto.getDepartmentId());
+        if (departmentOptional.isEmpty() || !departmentOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.<User>builder().
+                    message("Department not found!!!").
+                    status(400).
+                    success(false).
+                    build();
+        }
+        user.setDepartment(departmentOptional.get());
         try {
             user.setGender(Gender.valueOf(dto.getGenderType()));
         } catch (Exception e) {
