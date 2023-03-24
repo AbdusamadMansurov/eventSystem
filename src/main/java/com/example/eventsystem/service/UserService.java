@@ -233,7 +233,6 @@ public class UserService {
         if (dto.getAddressDTO() != null) {
             Address address = new Address();
             AddressDTO addressDTO = dto.getAddressDTO();
-            Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
             Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
             if (countryOptional.isEmpty()) {
                 return ApiResponse.<User>builder().
@@ -245,7 +244,7 @@ public class UserService {
             Country country = countryOptional.get();
             address.setCountry(country);
 
-            if (dto.getAddressDTO().getRegionId() != null) {
+            if (addressDTO.getRegionId() != null) {
                 Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
                 if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
                     return ApiResponse.<User>builder().
@@ -256,15 +255,18 @@ public class UserService {
                 }
                 address.setRegion(regionOptional.get());
             }
-            if (districtOptional.isEmpty()) {
-                return ApiResponse.<User>builder().
-                        message("District not found!!!").
-                        status(400).
-                        success(false).
-                        build();
+            if (addressDTO.getDistrictId() != null) {
+                Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+                if (districtOptional.isEmpty()) {
+                    return ApiResponse.<User>builder().
+                            message("District not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+                address.setDistrict(districtOptional.get());
             }
 
-            address.setDistrict(districtOptional.get());
             address.setStreetHome(address.getStreetHome());
             user.setAddress(address);
         }
