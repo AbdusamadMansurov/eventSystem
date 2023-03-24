@@ -104,7 +104,7 @@ public class UserService {
         }
         Department department = departmentOptional.get();
         user.setDepartment(department);
-        if (dto.getPhone() != null && dto.getPhone().equals("")) {
+        if (dto.getPhone() != null && !dto.getPhone().equals("")) {
             Optional<User> userOptionalByPhone = userRepository.findByPhoneAndDepartment_Id(dto.getPhone(), department.getId());
             if (userOptionalByPhone.isPresent()) {
                 return ApiResponse.<User>builder().
@@ -114,7 +114,7 @@ public class UserService {
                         build();
             }
         }
-        if (dto.getEmail() != null && dto.getEmail().equals("")) {
+        if (dto.getEmail() != null && !dto.getEmail().equals("")) {
             Optional<User> userOptionalByEmail = userRepository.findByEmailAndDepartment_Id(dto.getEmail(), department.getId());
             if (userOptionalByEmail.isPresent()) {
                 return ApiResponse.<User>builder().
@@ -194,7 +194,7 @@ public class UserService {
                     build();
         }
         User user = userOptional.get();
-        if (dto.getPhone() != null && dto.getPhone().equals("")) {
+        if (dto.getPhone() != null && !dto.getPhone().equals("")) {
             Optional<User> userOptionalByPhone = userRepository.findByPhoneAndDepartment_Id(dto.getPhone(), user.getDepartment().getId());
             if (userOptionalByPhone.isPresent() && !userOptionalByPhone.get().getId().equals(user.getId())) {
                 return ApiResponse.<User>builder().
@@ -204,7 +204,7 @@ public class UserService {
                         build();
             }
         }
-        if (dto.getEmail() != null && dto.getEmail().equals("")) {
+        if (dto.getEmail() != null && !dto.getEmail().equals("")) {
             Optional<User> userOptionalByEmail = userRepository.findByEmailAndDepartment_Id(dto.getEmail(), user.getDepartment().getId());
             if (userOptionalByEmail.isPresent() && !userOptionalByEmail.get().getId().equals(user.getId())) {
                 return ApiResponse.<User>builder().
