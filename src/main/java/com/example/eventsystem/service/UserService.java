@@ -155,11 +155,12 @@ public class UserService {
     }
 
 
-        userRepository.save(user);
+        User save = userRepository.save(user);
         return ApiResponse.builder().
                 message("User is created").
                 status(201).
                 success(true).
+                data(save).
                 build();
     }
 
