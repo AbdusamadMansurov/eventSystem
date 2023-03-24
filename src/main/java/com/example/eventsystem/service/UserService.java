@@ -102,7 +102,28 @@ public class UserService {
                     success(false).
                     build();
         }
-        user.setDepartment(departmentOptional.get());
+        Department department = departmentOptional.get();
+        user.setDepartment(department);
+        if (dto.getPhone() != null && dto.getPhone().equals("")) {
+            Optional<User> userOptionalByPhone = userRepository.findByPhoneAndDepartment_Id(dto.getPhone(), department.getId());
+            if (userOptionalByPhone.isPresent()) {
+                return ApiResponse.<User>builder().
+                        message("This phone number already exist!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+        }
+        if (dto.getEmail() != null && dto.getEmail().equals("")) {
+            Optional<User> userOptionalByEmail = userRepository.findByEmailAndDepartment_Id(dto.getEmail(), department.getId());
+            if (userOptionalByEmail.isPresent()) {
+                return ApiResponse.<User>builder().
+                        message("This email already exist!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+        }
         try {
             user.setGender(Gender.valueOf(dto.getGenderType()));
         } catch (Exception e) {
@@ -112,47 +133,46 @@ public class UserService {
                     success(false).
                     build();
         }
-        if (dto.getAddressDTO() != null){
-        Address address = new Address();
-        AddressDTO addressDTO = dto.getAddressDTO();
-
-        Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
-        if (countryOptional.isEmpty()) {
-            return ApiResponse.<User>builder().
-                    message("Country not found!!!").
-                    success(false).
-                    status(400).
-                    build();
-        }
-        Country country = countryOptional.get();
-        address.setCountry(country);
-
-        if (addressDTO.getRegionId() != null) {
-            Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
-            if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+        if (dto.getAddressDTO() != null) {
+            Address address = new Address();
+            AddressDTO addressDTO = dto.getAddressDTO();
+            Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+            if (countryOptional.isEmpty()) {
                 return ApiResponse.<User>builder().
-                        message("Region not found!!!").
+                        message("Country not found!!!").
                         success(false).
                         status(400).
                         build();
             }
-            address.setRegion(regionOptional.get());
-        }
-        if (addressDTO.getDistrictId() != null){
-            Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
-            if (districtOptional.isEmpty()) {
-                return ApiResponse.<User>builder().
-                        message("District not found!!!").
-                        status(400).
-                        success(false).
-                        build();
-            }
-            address.setDistrict(districtOptional.get());
-        }
+            Country country = countryOptional.get();
+            address.setCountry(country);
 
-        address.setStreetHome(address.getStreetHome());
+            if (addressDTO.getRegionId() != null) {
+                Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
+                if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                    return ApiResponse.<User>builder().
+                            message("Region not found!!!").
+                            success(false).
+                            status(400).
+                            build();
+                }
+                address.setRegion(regionOptional.get());
+            }
+            if (addressDTO.getDistrictId() != null) {
+                Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+                if (districtOptional.isEmpty()) {
+                    return ApiResponse.<User>builder().
+                            message("District not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+                address.setDistrict(districtOptional.get());
+            }
+
+            address.setStreetHome(address.getStreetHome());
             user.setAddress(address);
-    }
+        }
 
 
         User save = userRepository.save(user);
@@ -166,7 +186,7 @@ public class UserService {
 
     public ApiResponse<?> edit(Long id, UserDTO dto, Employee employee) {
         Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) {
+        if (userOptional.isEmpty() || !userOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     success(false).
                     status(204).
@@ -174,24 +194,30 @@ public class UserService {
                     build();
         }
         User user = userOptional.get();
-//        if (!user.getUsername().equals(dto.getUsername())) {
-//            changeService.changeSaver(employee, "user", "username", user.getUsername(), dto.getUsername());
-//        }
-//        if (!user.getFullName().equals(dto.getFullName())) {
-//            changeService.changeSaver(employee, "user", "fullName", user.getFullName(), dto.getFullName());
-//        }
-//        if (!user.getEmail().equals(dto.getEmail())) {
-//            changeService.changeSaver(employee, "user", "email", user.getEmail(), dto.getEmail());
-//        }
-//        if (!user.getPassportNumber().equals(dto.getPassportNumber())) {
-//            changeService.changeSaver(employee, "user", "passportNumber", user.getPassportNumber(), dto.getPassportNumber());
-//        }
-//        if (!user.getBrithDate().equals(dto.getBrithDate())) {
-//            changeService.changeSaver(employee, "user", "brithDate", user.getBrithDate().toString(), dto.getBrithDate().toString());
-//        }
+        if (dto.getPhone() != null && dto.getPhone().equals("")) {
+            Optional<User> userOptionalByPhone = userRepository.findByPhoneAndDepartment_Id(dto.getPhone(), user.getDepartment().getId());
+            if (userOptionalByPhone.isPresent() && !userOptionalByPhone.get().getId().equals(user.getId())) {
+                return ApiResponse.<User>builder().
+                        message("This phone number already exist!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+        }
+        if (dto.getEmail() != null && dto.getEmail().equals("")) {
+            Optional<User> userOptionalByEmail = userRepository.findByEmailAndDepartment_Id(dto.getEmail(), user.getDepartment().getId());
+            if (userOptionalByEmail.isPresent() && !userOptionalByEmail.get().getId().equals(user.getId())) {
+                return ApiResponse.<User>builder().
+                        message("This email already exist!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+        }
         user.setFullName(dto.getFullName());
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
         user.setPassportNumber(dto.getPassportNumber());
         user.setBrithDate(dto.getBrithDate());
         try {
@@ -203,7 +229,7 @@ public class UserService {
                     success(false).
                     build();
         }
-        if (dto.getAddressDTO() != null){
+        if (dto.getAddressDTO() != null) {
             Address address = new Address();
             AddressDTO addressDTO = dto.getAddressDTO();
             Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
@@ -251,7 +277,7 @@ public class UserService {
 
     public ApiResponse<?> delete(Long id, Employee employee) {
         Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) {
+        if (userOptional.isEmpty() || !userOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
                     message("User is not found !").
                     success(false).

@@ -1,6 +1,5 @@
 package com.example.eventsystem.repository;
 
-import com.example.eventsystem.model.Company;
 import com.example.eventsystem.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +19,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByQrcode( UUID qrcode);
     Optional<User> findByPhone(String phone);
     Optional<User> findByPhoneAndDepartment_Id(String phone, Long departmentId);
+    Optional<User> findByEmailAndDepartment_Id(String email, Long departmentId);
     Page<User> findAllByDepartment_Company_Id(Long companyId, Pageable pageable);
     Page<User> findAllByActiveTrueAndDepartment_Company_Id(Long companyId, Pageable pageable);
     Page<User> findAllByActiveFalseAndDepartment_Company_Id(Long companyId, Pageable pageable);

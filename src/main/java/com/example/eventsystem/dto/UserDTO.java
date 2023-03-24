@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 public class UserDTO {
 
-    private String username, fullName, email, passportNumber;
+    private String username, fullName, email, passportNumber, phone;
 
     private String genderType;
     private Long departmentId;
