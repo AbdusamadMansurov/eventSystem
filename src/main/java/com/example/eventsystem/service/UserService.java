@@ -91,7 +91,6 @@ public class UserService {
         User user = new User();
         user.setFullName(dto.getFullName());
         user.setUsername(dto.getUsername());
-        user.setEmail(dto.getEmail());
         user.setPassportNumber(dto.getPassportNumber());
         user.setBrithDate(dto.getBrithDate());
         Optional<Department> departmentOptional = departmentRepository.findById(dto.getDepartmentId());
@@ -113,6 +112,7 @@ public class UserService {
                         success(false).
                         build();
             }
+            user.setPhone(dto.getPhone());
         }
         if (dto.getEmail() != null && !dto.getEmail().equals("")) {
             Optional<User> userOptionalByEmail = userRepository.findByEmailAndDepartment_Id(dto.getEmail(), department.getId());
@@ -123,6 +123,7 @@ public class UserService {
                         success(false).
                         build();
             }
+            user.setEmail(dto.getEmail());
         }
         try {
             user.setGender(Gender.valueOf(dto.getGenderType()));
@@ -203,6 +204,7 @@ public class UserService {
                         success(false).
                         build();
             }
+            user.setPhone(dto.getPhone());
         }
         if (dto.getEmail() != null && !dto.getEmail().equals("")) {
             Optional<User> userOptionalByEmail = userRepository.findByEmailAndDepartment_Id(dto.getEmail(), user.getDepartment().getId());
@@ -213,11 +215,10 @@ public class UserService {
                         success(false).
                         build();
             }
+            user.setEmail(dto.getEmail());
         }
         user.setFullName(dto.getFullName());
         user.setUsername(dto.getUsername());
-        user.setEmail(dto.getEmail());
-        user.setPhone(dto.getPhone());
         user.setPassportNumber(dto.getPassportNumber());
         user.setBrithDate(dto.getBrithDate());
         try {
