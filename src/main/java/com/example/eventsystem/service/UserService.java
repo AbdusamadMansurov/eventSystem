@@ -5,9 +5,7 @@ import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.UserDTO;
 import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.Gender;
-import com.example.eventsystem.repository.DepartmentRepository;
-import com.example.eventsystem.repository.DistrictRepository;
-import com.example.eventsystem.repository.UserRepository;
+import com.example.eventsystem.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,9 +23,10 @@ public class UserService {
     private int size;
 
     private final UserRepository userRepository;
+    private final RegionRepository regionRepository;
     private final DistrictRepository districtRepository;
-    private final ChangeService changeService;
     private final DepartmentRepository departmentRepository;
+    private final CountryRepository countryRepository;
 
     public ApiResponse<Page<User>> getAll(int page, Employee employee, Boolean active) {
 
@@ -38,15 +37,22 @@ public class UserService {
                     status(400).
                     success(false).
                     build();
+        Page<User> users;
 
-        Page<User> users = userRepository.findAllByActiveAndDepartment_Company(pageable, employee.getCompany(), active);
-        if (users.isEmpty()) {
-            return ApiResponse.<Page<User>>builder().
-                    success(false).
-                    status(400).
-                    message("Users not found").
-                    build();
+        if (active.equals(Boolean.TRUE)) {
+            users = userRepository.findAllByActiveTrueAndDepartment_Company_Id(employee.getCompany().getId(), pageable);
+        } else if (active.equals(Boolean.FALSE)) {
+            users = userRepository.findAllByActiveFalseAndDepartment_Company_Id(employee.getCompany().getId(), pageable);
+        } else {
+            users = userRepository.findAllByDepartment_Company_Id(employee.getCompany().getId(), pageable);
         }
+//        if (users.isEmpty()) {
+//            return ApiResponse.<Page<User>>builder().
+//                    success(false).
+//                    status(400).
+//                    message("Users not found").
+//                    build();
+//        }
         return ApiResponse.<Page<User>>builder().
                 success(true).
                 status(200).
@@ -106,13 +112,32 @@ public class UserService {
                     success(false).
                     build();
         }
-
+        if (dto.getAddressDTO() != null){
         Address address = new Address();
-
         AddressDTO addressDTO = dto.getAddressDTO();
-
         Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+        Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+        if (countryOptional.isEmpty()) {
+            return ApiResponse.<User>builder().
+                    message("Country not found!!!").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        Country country = countryOptional.get();
+        address.setCountry(country);
 
+        if (dto.getAddressDTO().getRegionId() != null) {
+            Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
+            if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                return ApiResponse.<User>builder().
+                        message("Region not found!!!").
+                        success(false).
+                        status(400).
+                        build();
+            }
+            address.setRegion(regionOptional.get());
+        }
         if (districtOptional.isEmpty()) {
             return ApiResponse.<User>builder().
                     message("District not found!!!").
@@ -123,8 +148,9 @@ public class UserService {
 
         address.setDistrict(districtOptional.get());
         address.setStreetHome(address.getStreetHome());
+            user.setAddress(address);
+    }
 
-        user.setAddress(address);
 
         userRepository.save(user);
         return ApiResponse.builder().
@@ -173,20 +199,44 @@ public class UserService {
                     success(false).
                     build();
         }
-        Address address = user.getAddress();
-        AddressDTO addressDTO = dto.getAddressDTO();
-        Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+        if (dto.getAddressDTO() != null){
+            Address address = new Address();
+            AddressDTO addressDTO = dto.getAddressDTO();
+            Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+            Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+            if (countryOptional.isEmpty()) {
+                return ApiResponse.<User>builder().
+                        message("Country not found!!!").
+                        success(false).
+                        status(400).
+                        build();
+            }
+            Country country = countryOptional.get();
+            address.setCountry(country);
 
-        if (districtOptional.isEmpty()) {
-            return ApiResponse.<User>builder().
-                    message("District not found!!!").
-                    status(400).
-                    success(false).
-                    build();
+            if (dto.getAddressDTO().getRegionId() != null) {
+                Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
+                if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                    return ApiResponse.<User>builder().
+                            message("Region not found!!!").
+                            success(false).
+                            status(400).
+                            build();
+                }
+                address.setRegion(regionOptional.get());
+            }
+            if (districtOptional.isEmpty()) {
+                return ApiResponse.<User>builder().
+                        message("District not found!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+
+            address.setDistrict(districtOptional.get());
+            address.setStreetHome(address.getStreetHome());
+            user.setAddress(address);
         }
-        address.setDistrict(districtOptional.get());
-        address.setStreetHome(address.getStreetHome());
-        user.setAddress(address);
         userRepository.save(user);
         return ApiResponse.builder().
                 message("User is edited!").

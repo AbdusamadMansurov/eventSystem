@@ -78,7 +78,10 @@ public class User {
     @Column(nullable = true)
     private boolean resident = true;
     private String know, company, workType;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JsonIgnore
     @ManyToOne
+    @ToString.Exclude
     private Employee employee;
     private LocalDateTime botRegisteredTime;
     private LocalDateTime siteRegisteredTime;

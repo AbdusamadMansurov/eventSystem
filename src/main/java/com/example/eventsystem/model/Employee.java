@@ -44,6 +44,7 @@ public class Employee implements UserDetails {
 
     @ManyToOne
     @JsonIgnore
+    @ToString.Exclude
     private Company company;
 
     @ManyToOne(cascade = CascadeType.ALL)

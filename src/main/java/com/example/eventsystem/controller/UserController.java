@@ -23,7 +23,9 @@ public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
     @GetMapping
-    public ResponseEntity<?> getAllByCompany(@RequestParam(defaultValue = "0") int page, @AuthenticationPrincipal Employee employee, @RequestParam Boolean active) {
+    public ResponseEntity<?> getAllByCompany(@RequestParam(defaultValue = "0") int page,
+                                             @AuthenticationPrincipal Employee employee,
+                                             @RequestParam(defaultValue = "null") Boolean active) {
         ApiResponse<Page<User>> response = userService.getAll(page, employee, active);
         return ResponseEntity.status(response.getStatus()).body(response);
     }

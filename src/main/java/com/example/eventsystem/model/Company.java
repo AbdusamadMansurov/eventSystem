@@ -34,6 +34,7 @@ public class Company {
     private List<BankInfo> bankInfo;
     @ManyToOne
     @JsonIgnore
+    @ToString.Exclude
     private Employee director;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime registeredTime = LocalDateTime.now();
