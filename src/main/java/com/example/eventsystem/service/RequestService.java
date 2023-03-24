@@ -33,16 +33,14 @@ public class RequestService {
     private final ProductRepository productRepository;
     private final TelegramService telegramService;
 
-    public ApiResponse<Page<Request>> getRequest(int page, Boolean view) {
-
-
+    public ApiResponse<Page<Request>> getRequest(int page, Boolean view, Employee employee) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Request> requests;
 
         if (view == null)
             requests = requestRepository.findAll(pageable);
         else
-            requests = requestRepository.findAllByView(view, pageable);
+            requests = requestRepository.findAllByViewAndUser_Department_Company_Id(view, employee.getCompany().getId(),pageable);
 
         if (requests.isEmpty()) {
             return ApiResponse.<Page<Request>>builder().
@@ -59,10 +57,10 @@ public class RequestService {
                 build();
     }
 
-    public ApiResponse<Request> getOneRequest(Long id) {
+    public ApiResponse<Request> getOneRequest(Long id, Employee employee) {
         Optional<Request> requestOptional = requestRepository.findById(id);
 
-        if (requestOptional.isEmpty()) {
+        if (requestOptional.isEmpty() || !requestOptional.get().getUser().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Request>builder().
                     message("Requests not found !").
                     status(400).
@@ -169,10 +167,10 @@ public class RequestService {
                 build();
     }
 
-    public ApiResponse<Request> addRequest(RequestDTO dto) {
+    public ApiResponse<Request> addRequest(RequestDTO dto, Employee employee) {
         Optional<User> userOptional = userRepository.findById(dto.getUserId());
 
-        if (userOptional.isEmpty()) {
+        if (userOptional.isEmpty() || !userOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Request>builder().
                     message("User not found!!!").
                     success(false).
@@ -201,20 +199,13 @@ public class RequestService {
     @SneakyThrows
     public ApiResponse<Request> editRequestStatus(Long id, Employee employee) {
         Optional<Request> requestOptional = requestRepository.findById(id);
-        if (requestOptional.isEmpty()) {
+        if (requestOptional.isEmpty() || !requestOptional.get().getUser().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Request>builder().
                     message("Request id not found !").
                     status(400).
                     success(false).
                     build();
         }
-
-        if (employee == null)
-            return ApiResponse.<Request>builder().
-                    message("Employee not found !").
-                    status(400).
-                    success(false).
-                    build();
         Request request = requestOptional.get();
         request.setView(true);
         request.setEmployee(employee);

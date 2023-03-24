@@ -16,6 +16,6 @@ import java.util.List;
 
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
-    Page<Request> findAllByView(boolean view, Pageable pageable);
+    Page<Request> findAllByViewAndUser_Department_Company_Id(boolean view,Long companyId, Pageable pageable);
     List<Request> findAllByProductAndUser(Product product, User user);
 }

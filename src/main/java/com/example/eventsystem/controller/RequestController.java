@@ -24,8 +24,8 @@ public class RequestController {
 
 
     @GetMapping("/getRequests")
-    public ResponseEntity<?> getRequest(@RequestParam(defaultValue = "0") int page, @RequestParam Boolean view) {
-        ApiResponse<Page<Request>> response = requestService.getRequest(page, view);
+    public ResponseEntity<?> getRequest(@RequestParam(defaultValue = "0") int page, @RequestParam Boolean view, @AuthenticationPrincipal Employee employee) {
+        ApiResponse<Page<Request>> response = requestService.getRequest(page, view, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
@@ -36,8 +36,8 @@ public class RequestController {
     }
 
     @GetMapping("/getRequest/{id}")
-    public ResponseEntity<?> getOneRequest(@PathVariable Long id){
-        ApiResponse<Request> response = requestService.getOneRequest(id);
+    public ResponseEntity<?> getOneRequest(@PathVariable Long id, @AuthenticationPrincipal Employee employee){
+        ApiResponse<Request> response = requestService.getOneRequest(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
@@ -54,8 +54,8 @@ public class RequestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addRequest(@RequestBody RequestDTO dto){
-        ApiResponse<Request> response = requestService.addRequest(dto);
+    public ResponseEntity<?> addRequest(@RequestBody RequestDTO dto, @AuthenticationPrincipal Employee employee){
+        ApiResponse<Request> response = requestService.addRequest(dto, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
     @PatchMapping
