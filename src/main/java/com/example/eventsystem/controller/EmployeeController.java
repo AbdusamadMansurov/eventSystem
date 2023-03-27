@@ -48,8 +48,8 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> edit(@PathVariable Long id, @RequestBody EmployeeDTO dto) {
-        ApiResponse<Employee> response = employeeService.edit(id, dto);
+    public ResponseEntity<?> edit(@PathVariable Long id, @RequestBody EmployeeDTO dto, @AuthenticationPrincipal Employee employee) {
+        ApiResponse<Employee> response = employeeService.edit(id, dto, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

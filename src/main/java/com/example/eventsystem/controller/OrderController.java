@@ -17,7 +17,7 @@ import java.util.List;
  * @author Mansurov Abdusamad  *  14.12.2022  *  10:14   *  tedaSystem
  */
 @RestController
-@RequestMapping
+@RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
 

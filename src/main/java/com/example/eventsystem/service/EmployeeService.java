@@ -80,14 +80,6 @@ public class EmployeeService {
     }
 
     public ApiResponse<Employee> add(EmployeeDTO dto, Employee employee1) {
-        Optional<Company> companyOptional = companyRepository.findById(employee1.getCompany().getId());
-        if (companyOptional.isEmpty()) {
-            return ApiResponse.<Employee>builder().
-                    message("Company not found!!!").
-                    success(false).
-                    status(400).
-                    build();
-        }
 
         if (employeeRepository.findByPhoneFirstAndCompany_Id(dto.getPhoneFirst(), employee1.getCompany().getId()).isPresent()) {
             return ApiResponse.<Employee>builder().
@@ -121,7 +113,7 @@ public class EmployeeService {
             address.setStreetHome(address.getStreetHome());
             employee.setAddress(address);
         }
-        employee.setCompany(companyOptional.get());
+        employee.setCompany(employee1.getCompany());
         employee.setFullName(dto.getFullName());
         employee.setPhoneFirst(dto.getPhoneFirst());
         employee.setPhoneSecond(dto.getPhoneSecond());
@@ -144,10 +136,10 @@ public class EmployeeService {
                 build();
     }
 
-    public ApiResponse<Employee> edit(Long id, EmployeeDTO dto) {
+    public ApiResponse<Employee> edit(Long id, EmployeeDTO dto, Employee employee) {
         Optional<Employee> employeeOptional = employeeRepository.findById(id);
 
-        if (employeeOptional.isEmpty()) {
+        if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Employee>builder().
                     message("Employee not found!!!").
                     success(false).
@@ -155,13 +147,11 @@ public class EmployeeService {
                     build();
         }
 
-        Employee employee = employeeOptional.get();
+        Employee employee1 = employeeOptional.get();
 
         Optional<Employee> byPhoneFirst = employeeRepository.findByPhoneFirstAndCompany_Id(dto.getPhoneFirst(), employee.getCompany().getId());
 
-        if (byPhoneFirst.isPresent()) {
-            Employee employee1 = byPhoneFirst.get();
-            if (employee1.getId().equals(employee.getId()))
+        if (byPhoneFirst.isPresent() && !byPhoneFirst.get().getId().equals(employee1.getId())) {
                 return ApiResponse.<Employee>builder().
                         message("This phone number is used another employee. Please enter another phone number").
                         success(false).
@@ -173,7 +163,14 @@ public class EmployeeService {
         employee.setPhoneSecond(dto.getPhoneSecond());
         employee.setFullName(dto.getFullName());
         employee.setPassword(passwordEncoder.encode(dto.getPassword()));
-
+        Optional<Employee> byUsername = employeeRepository.findByUsernameAndCompany_Id(dto.getUsername(), employee.getCompany().getId());
+        if (byUsername.isPresent() && !byUsername.get().getId().equals(employee1.getId())) {
+            return ApiResponse.<Employee>builder().
+                    message("This phone number is used another employee. Please enter another phone number").
+                    success(false).
+                    status(400).
+                    build();
+        }
         Set<RoleType> roles = new HashSet<>();
 
         for (String roleString : dto.getRoleList()) {
