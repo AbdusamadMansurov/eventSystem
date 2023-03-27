@@ -24,7 +24,7 @@ public class RequestController {
 
 
     @GetMapping("/getRequests")
-    public ResponseEntity<?> getRequest(@RequestParam(defaultValue = "0") int page, @RequestParam Boolean view, @AuthenticationPrincipal Employee employee) {
+    public ResponseEntity<?> getRequest(@RequestParam(defaultValue = "0") int page, @RequestParam(required = false) Boolean view, @AuthenticationPrincipal Employee employee) {
         ApiResponse<Page<Request>> response = requestService.getRequest(page, view, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
