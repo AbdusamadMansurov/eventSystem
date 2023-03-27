@@ -30,7 +30,6 @@ public class Company {
     private Address address;
     @OneToMany(mappedBy = "company")
     @ToString.Exclude
-    @JsonIgnore
     private List<BankInfo> bankInfo;
     @ManyToOne
     @JsonIgnore
@@ -49,7 +48,7 @@ public class Company {
 //    private List<Site> siteList;
     @ManyToMany()
     @ToString.Exclude
-    @JsonIgnore
+//    @JsonIgnore
     private List<Department> departmentList;
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -64,12 +63,12 @@ public class Company {
     private String INN;
     @ManyToMany
     @ToString.Exclude
-    @JsonIgnore
+//    @JsonIgnore
     private List<WorkCategory> workCategoryList;
 
     @ManyToMany
     @ToString.Exclude
-    @JsonIgnore
+//    @JsonIgnore
     private List<WorkType> workTypeList;
 
     public Company(Employee director) {

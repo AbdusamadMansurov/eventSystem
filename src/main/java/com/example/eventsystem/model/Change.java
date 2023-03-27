@@ -19,9 +19,7 @@ public class Change {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Long columnId;
-
     private String columnName, tableName, oldData, newData;
     @ManyToOne
     private Employee employee;

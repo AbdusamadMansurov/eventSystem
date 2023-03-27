@@ -80,7 +80,7 @@ public class EmployeeService {
     }
 
     public ApiResponse<Employee> add(EmployeeDTO dto, Employee employee1) {
-        Optional<Company> companyOptional = companyRepository.findById(dto.getCompanyId());
+        Optional<Company> companyOptional = companyRepository.findById(employee1.getCompany().getId());
         if (companyOptional.isEmpty()) {
             return ApiResponse.<Employee>builder().
                     message("Company not found!!!").
@@ -98,7 +98,7 @@ public class EmployeeService {
         }
         if (employeeRepository.findByUsername(dto.getUsername()).isPresent()) {
             return ApiResponse.<Employee>builder().
-                    message("This username " + dto.getUsername() + " is used. Please enter another phone number").
+                    message("This username " + dto.getUsername() + " is used. Please enter another username").
                     success(false).
                     status(400).
                     build();
@@ -245,7 +245,7 @@ public class EmployeeService {
 
         if (active.equals(Boolean.TRUE))
             employeePage = employeeRepository.findAllByActiveTrueAndCompany_Id(companyId, pageable);
-        if (active.equals(Boolean.FALSE))
+       else if (active.equals(Boolean.FALSE))
             employeePage = employeeRepository.findAllByActiveFalseAndCompany_Id(companyId, pageable);
         else
             employeePage = employeeRepository.findAllByCompany_Id(companyId, pageable);

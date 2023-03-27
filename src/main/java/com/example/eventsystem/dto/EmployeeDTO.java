@@ -18,6 +18,6 @@ public class EmployeeDTO {
     private String phoneFirst;
     private String phoneSecond;
     private AddressDTO addressDTO;
-    private Long companyId;
+//    private Long companyId;
     private List<String> roleList;
 }

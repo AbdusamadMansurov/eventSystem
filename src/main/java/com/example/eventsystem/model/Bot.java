@@ -39,7 +39,6 @@ public class Bot {
 //    private List<Vacancy> vacancies;
     @Column(nullable = false)
     private boolean active = true;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @ToString.Exclude
     private Attachment logo;

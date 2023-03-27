@@ -27,7 +27,6 @@ public class Avatar {
     @OneToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User user;
-    private String personal;
-    private String  aboutWork;
-    private String hobby;
+    @Column(columnDefinition = "text")
+    private String personal, aboutWork, hobby;
 }
