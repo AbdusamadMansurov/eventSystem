@@ -16,5 +16,5 @@ public interface UserHistoryRepository extends JpaRepository<UserHistory, Long> 
     @Query(value = "select count(id) as amount from user_history where product_id =:id",nativeQuery = true)
     long getAmountByProduct(@Param("id") long id);
 
-    List<UserHistory> findAllByUser_Department_Id(Long departmentId);
+    List<UserHistory> findAllByUser_Department_Company_Id(Long companyId);
 }

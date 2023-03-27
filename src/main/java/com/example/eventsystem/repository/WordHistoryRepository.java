@@ -11,5 +11,5 @@ import java.util.List;
  */
 @Repository
 public interface WordHistoryRepository extends JpaRepository<WordHistory,Long> {
-    List<WordHistory> findAllByUser_Department_Id(Long departmentId);
+    List<WordHistory> findAllByUser_Department_Company_Id(Long companyId);
 }
