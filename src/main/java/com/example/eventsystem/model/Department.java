@@ -27,12 +27,13 @@ public class Department {
     private Site site;
     @OneToMany(mappedBy = "department")
     @ToString.Exclude
+    @JsonIgnore
     private List<User> clientList;
 
-    //    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @ToString.Exclude
-    @ManyToOne
+//    @ManyToOne
     private Company company;
     @OneToMany(mappedBy = "department")
     @ToString.Exclude

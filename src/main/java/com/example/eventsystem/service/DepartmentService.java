@@ -28,8 +28,8 @@ public class DepartmentService {
     }
 
     public ApiResponse<Department> getOne(Long id, Employee employee) {
-        Optional<Department> departmentOptional = departmentRepository.findById(id);
-        if (departmentOptional.isEmpty() || !departmentOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+        Optional<Department> departmentOptional = departmentRepository.findByIdAndCompany_Id(id, employee.getCompany().getId());
+        if (departmentOptional.isEmpty()) {
             return ApiResponse.<Department>builder().
                     message("Department not found!!!").
                     status(400).

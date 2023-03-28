@@ -49,7 +49,7 @@ public class Company {
 //    private List<Site> siteList;
     @ManyToMany()
     @ToString.Exclude
-//    @JsonIgnore
+    @JsonIgnore
     private List<Department> departmentList;
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -62,12 +62,12 @@ public class Company {
     private Attachment attachment;
     private Double abortion;
     private String INN;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
 //    @JsonIgnore
     private List<WorkCategory> workCategoryList;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
 //    @JsonIgnore
     private List<WorkType> workTypeList;
