@@ -18,8 +18,8 @@ public class DistrictController {
     private final DistrictService districtService;
 
     @GetMapping
-    public ResponseEntity<?> getAll() {
-        ApiResponse<List<District>> response = districtService.getAll();
+    public ResponseEntity<?> getAll(@RequestParam(required = false) Long regionId) {
+        ApiResponse<List<District>> response = districtService.getAll(regionId);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
