@@ -118,7 +118,7 @@ public class EmployeeService {
         employee.setPhoneFirst(dto.getPhoneFirst());
         employee.setPhoneSecond(dto.getPhoneSecond());
         employee.setPassword(passwordEncoder.encode(dto.getPassword()));
-
+        employee.setUsername(dto.getUsername());
         Set<RoleType> roles = new HashSet<>();
 
         for (String roleString : dto.getRoleList()) {

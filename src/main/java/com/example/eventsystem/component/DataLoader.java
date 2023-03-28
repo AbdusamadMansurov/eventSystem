@@ -14,10 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Component
@@ -68,7 +65,7 @@ public class DataLoader implements CommandLineRunner {
             bankInfos.add(bankInfo1);
             bankInfoRepository.saveAll(bankInfos);
         }
-//        if (runMode.equals("never")) {
+        if (runMode.equals("never")) {
 //            List<Company> companies = companyRepository.findAll();
 //            for (Company company : companies) {
 //                Employee director = company.getDirector();
@@ -81,7 +78,13 @@ public class DataLoader implements CommandLineRunner {
 //                    user.setAddress(company.getAddress());
 //                    employeeRepository.save(director);
 //                    userRepository.save(user);
-//                }
+
+            Optional<Employee> employeeOptional = employeeRepository.findById(3415L);
+            Employee employee = employeeOptional.get();
+            employee.setPassword(passwordEncoder.encode("123123"));
+            employee.setPhoneFirst("+998977515747");
+            employeeRepository.save(employee);
+        }
         }
     }
 
