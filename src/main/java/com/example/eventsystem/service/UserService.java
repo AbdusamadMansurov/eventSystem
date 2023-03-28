@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,15 +29,9 @@ public class UserService {
     private final DepartmentRepository departmentRepository;
     private final CountryRepository countryRepository;
 
-    public ApiResponse<Page<User>> getAll(int page, Employee employee, Boolean active) {
+    public ApiResponse<Page<User>> getAll(boolean desc, int page, Employee employee, Boolean active) {
 
-        Pageable pageable = PageRequest.of(page, size);
-        if (employee == null)
-            return ApiResponse.<Page<User>>builder().
-                    message("Employee not found!!!").
-                    status(400).
-                    success(false).
-                    build();
+        Pageable pageable = PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, "id"));
         Page<User> users;
 
         if (active.equals(Boolean.TRUE)) {

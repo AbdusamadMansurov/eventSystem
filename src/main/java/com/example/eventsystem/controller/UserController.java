@@ -22,22 +22,24 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+
     @GetMapping
     public ResponseEntity<?> getAllByCompany(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "false") boolean desc,
                                              @AuthenticationPrincipal Employee employee,
                                              @RequestParam(defaultValue = "null") Boolean active) {
-        ApiResponse<Page<User>> response = userService.getAll(page, employee, active);
+        ApiResponse<Page<User>> response = userService.getAll(desc, page, employee, active);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOne(@PathVariable Long id,@AuthenticationPrincipal Employee employee) {
+    public ResponseEntity<?> getOne(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
         ApiResponse<User> response = userService.getOne(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllLIst(){
+    public ResponseEntity<?> getAllLIst() {
         ApiResponse<List<User>> response = userService.getAllList();
         return ResponseEntity.status(response.getStatus()).body(response);
     }
