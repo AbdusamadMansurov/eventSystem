@@ -53,8 +53,8 @@ public class RequestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestParam Long userId, @RequestParam Long eventId, @AuthenticationPrincipal Employee employee){
-        ApiResponse<Request> response = requestService.add(userId, eventId, employee);
+    public ResponseEntity<?> add(@RequestParam Long userId, @RequestParam Long productId, @AuthenticationPrincipal Employee employee){
+        ApiResponse<Request> response = requestService.add(userId, productId, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
