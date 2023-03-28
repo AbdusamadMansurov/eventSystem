@@ -93,8 +93,8 @@ public class UserService {
         user.setUsername(dto.getUsername());
         user.setPassportNumber(dto.getPassportNumber());
         user.setBrithDate(dto.getBrithDate());
-        Optional<Department> departmentOptional = departmentRepository.findById(dto.getDepartmentId());
-        if (departmentOptional.isEmpty() || !departmentOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+        Optional<Department> departmentOptional = departmentRepository.findByIdAndCompany_Id(dto.getDepartmentId(), employee.getCompany().getId());
+        if (departmentOptional.isEmpty()) {
             return ApiResponse.<User>builder().
                     message("Department not found!!!").
                     status(400).

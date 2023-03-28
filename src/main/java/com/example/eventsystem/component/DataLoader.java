@@ -79,11 +79,11 @@ public class DataLoader implements CommandLineRunner {
 //                    employeeRepository.save(director);
 //                    userRepository.save(user);
 
-            Optional<Employee> employeeOptional = employeeRepository.findById(3415L);
-            Employee employee = employeeOptional.get();
-            employee.setPassword(passwordEncoder.encode("123123"));
-            employee.setPhoneFirst("+998977515747");
-            employeeRepository.save(employee);
+//            Optional<Employee> employeeOptional = employeeRepository.findById(3415L);
+//            Employee employee = employeeOptional.get();
+//            employee.setPassword(passwordEncoder.encode("123123"));
+//            employee.setPhoneFirst("+998977515747");
+//            employeeRepository.save(employee);
         }
         }
     }
