@@ -32,6 +32,15 @@ public class UserController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @GetMapping("/getByQ")
+    public ResponseEntity<?> getByPhoneOrName(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(required = false) String name,
+                                              @RequestParam(required = false) String phone,
+                                              @AuthenticationPrincipal Employee employee) {
+        ApiResponse<List<User>> response = userService.getByPhoneOrName(page, name, phone, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getOne(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
         ApiResponse<User> response = userService.getOne(id, employee);

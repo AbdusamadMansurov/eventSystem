@@ -6,6 +6,7 @@ import com.example.eventsystem.dto.UserDTO;
 import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.Gender;
 import com.example.eventsystem.repository.*;
+import com.example.eventsystem.specification.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -312,4 +314,38 @@ public class UserService {
     }
 
 
+    public ApiResponse<List<User>> getByPhoneOrName(int page, String name, String phone, Employee employee) {
+        SearchRequest searchRequest = new SearchRequest();
+        List<FilterRequest> filterRequests = new ArrayList<>();
+        filterRequests.add(FilterRequest.builder().
+                fieldType(FieldType.LONG).
+                operator(Operator.EQUAL).
+                value(employee.getCompany().getId()).
+                key("department.company.id").
+                build());
+        if (name != null){
+            filterRequests.add(FilterRequest.builder().
+                    fieldType(FieldType.STRING).
+                    operator(Operator.LIKE).
+                    value(name).
+                    key("fullName").
+                    build());
+        }
+        if (phone != null){
+            filterRequests.add(FilterRequest.builder().
+                    fieldType(FieldType.STRING).
+                    operator(Operator.LIKE).
+                    value(phone).
+                    key("phone").
+                    build());
+        }
+
+        List<User> userList = userRepository.findAll(new EntitySpecification<>(searchRequest));
+           return ApiResponse.<List<User>>builder().
+                message("Users here!!!").
+                status(200).
+                success(true).
+                data(userList).
+                build();
+    }
 }
