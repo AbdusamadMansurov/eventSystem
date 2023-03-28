@@ -159,10 +159,10 @@ public class EmployeeService {
                         build();
         }
 
-        employee.setPhoneFirst(dto.getPhoneFirst());
-        employee.setPhoneSecond(dto.getPhoneSecond());
-        employee.setFullName(dto.getFullName());
-        employee.setPassword(passwordEncoder.encode(dto.getPassword()));
+        employee1.setPhoneFirst(dto.getPhoneFirst());
+        employee1.setPhoneSecond(dto.getPhoneSecond());
+        employee1.setFullName(dto.getFullName());
+        employee1.setPassword(passwordEncoder.encode(dto.getPassword()));
         Optional<Employee> byUsername = employeeRepository.findByUsernameAndCompany_Id(dto.getUsername(), employee.getCompany().getId());
         if (byUsername.isPresent() && !byUsername.get().getId().equals(employee1.getId())) {
             return ApiResponse.<Employee>builder().
@@ -177,13 +177,13 @@ public class EmployeeService {
             roles.add(RoleType.valueOf(roleString));
         }
 
-        employee.setRoles(roles);
+        employee1.setRoles(roles);
 
         if (dto.getAddressDTO() != null) {
             Address address = new Address();
             AddressDTO addressDTO = dto.getAddressDTO();
-            if (employee.getAddress() != null)
-                address = employee.getAddress();
+            if (employee1.getAddress() != null)
+                address = employee1.getAddress();
             Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
             if (districtOptional.isEmpty()) {
                 return ApiResponse.<Employee>builder().
@@ -194,10 +194,10 @@ public class EmployeeService {
             }
             address.setDistrict(districtOptional.get());
             address.setStreetHome(address.getStreetHome());
-            employee.setAddress(address);
+            employee1.setAddress(address);
         }
 
-        Employee save = employeeRepository.save(employee);
+        Employee save = employeeRepository.save(employee1);
 
         return ApiResponse.<Employee>builder().
                 message("Employee edited!!!").
