@@ -5,10 +5,7 @@ import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.EmployeeDTO;
 import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.RoleType;
-import com.example.eventsystem.repository.CompanyRepository;
-import com.example.eventsystem.repository.DistrictRepository;
-import com.example.eventsystem.repository.EmployeeRepository;
-import com.example.eventsystem.repository.ProductRepository;
+import com.example.eventsystem.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -34,6 +31,8 @@ public class EmployeeService {
     private final DistrictRepository districtRepository;
     private final PasswordEncoder passwordEncoder;
     private final ProductRepository productRepository;
+    private final CountryRepository countryRepository;
+    private final RegionRepository regionRepository;
 
     public ApiResponse<Page<Employee>> getAll(int page, Boolean active, Employee employee) {
         Pageable pageable = PageRequest.of(page, size);
@@ -98,18 +97,42 @@ public class EmployeeService {
 
         Employee employee = new Employee();
         if (dto.getAddressDTO() != null) {
-            AddressDTO addressDTO = dto.getAddressDTO();
             Address address = new Address();
-
-            Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
-            if (districtOptional.isEmpty()) {
+            AddressDTO addressDTO = dto.getAddressDTO();
+            Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+            if (countryOptional.isEmpty()) {
                 return ApiResponse.<Employee>builder().
-                        message("District not found!!!").
+                        message("Country not found!!!").
                         success(false).
                         status(400).
                         build();
             }
-            address.setDistrict(districtOptional.get());
+            Country country = countryOptional.get();
+            address.setCountry(country);
+
+            if (addressDTO.getRegionId() != null) {
+                Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
+                if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                    return ApiResponse.<Employee>builder().
+                            message("Region not found!!!").
+                            success(false).
+                            status(400).
+                            build();
+                }
+                address.setRegion(regionOptional.get());
+            }
+            if (addressDTO.getDistrictId() != null) {
+                Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+                if (districtOptional.isEmpty()) {
+                    return ApiResponse.<Employee>builder().
+                            message("District not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+                address.setDistrict(districtOptional.get());
+            }
+
             address.setStreetHome(address.getStreetHome());
             employee.setAddress(address);
         }
