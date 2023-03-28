@@ -65,7 +65,7 @@ public class DataLoader implements CommandLineRunner {
             bankInfos.add(bankInfo1);
             bankInfoRepository.saveAll(bankInfos);
         }
-        if (runMode.equals("never")) {
+//        if (runMode.equals("never")) {
 //            List<Company> companies = companyRepository.findAll();
 //            for (Company company : companies) {
 //                Employee director = company.getDirector();
@@ -84,7 +84,7 @@ public class DataLoader implements CommandLineRunner {
 //            employee.setPassword(passwordEncoder.encode("123123"));
 //            employee.setPhoneFirst("+998977515747");
 //            employeeRepository.save(employee);
-        }
+//        }
         }
     }
 
