@@ -27,8 +27,8 @@ public class BankInfo {
     private String currency;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
-//    @ManyToOne
+    @ManyToOne
 //    @JsonIgnore
-//    @ToString.Exclude
-//    private Company company;
+    @ToString.Exclude
+    private Company company;
 }
