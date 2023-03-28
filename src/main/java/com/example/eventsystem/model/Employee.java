@@ -43,7 +43,7 @@ public class Employee implements UserDetails {
     private String chatId;
 
     @ManyToOne
-    @JsonIgnore
+//    @JsonIgnore
     @ToString.Exclude
     private Company company;
 
