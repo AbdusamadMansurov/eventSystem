@@ -1,7 +1,6 @@
 package com.example.eventsystem.controller;
 
 import com.example.eventsystem.dto.ApiResponse;
-import com.example.eventsystem.dto.RequestDTO;
 import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.model.Request;
 import com.example.eventsystem.model.SiteHistory;
@@ -54,10 +53,16 @@ public class RequestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addRequest(@RequestBody RequestDTO dto, @AuthenticationPrincipal Employee employee){
-        ApiResponse<Request> response = requestService.addRequest(dto, employee);
+    public ResponseEntity<?> add(@RequestParam Long userId, @RequestParam Long eventId, @AuthenticationPrincipal Employee employee){
+        ApiResponse<Request> response = requestService.add(userId, eventId, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
+
+//    @PostMapping
+//    public ResponseEntity<?> addRequest(@RequestBody RequestDTO dto, @AuthenticationPrincipal Employee employee){
+//        ApiResponse<Request> response = requestService.addRequest(dto, employee);
+//        return ResponseEntity.status(response.getStatus()).body(response);
+//    }
     @PatchMapping
     public ResponseEntity<?> edit(@RequestParam String qrcode, @AuthenticationPrincipal Employee employee){
         ApiResponse<?> response = requestService.edit(qrcode, employee);
