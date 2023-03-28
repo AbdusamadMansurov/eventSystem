@@ -32,8 +32,7 @@ public class Message {
     private Request request;
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
-    @Builder.Default
-    private LocalDateTime sendTime = LocalDateTime.now();
+    private LocalDateTime sendTime;
     private LocalDateTime acceptTime;
     private boolean accept;
     private String email;
