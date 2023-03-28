@@ -36,4 +36,7 @@ public class Message {
     private LocalDateTime sendTime = LocalDateTime.now();
     private LocalDateTime acceptTime;
     private boolean accept;
+    private String email;
+    @ManyToOne
+    private Employee employee;
 }
