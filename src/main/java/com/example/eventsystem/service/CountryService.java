@@ -109,4 +109,13 @@ public class CountryService {
                 status(200).
                 build();
     }
+
+    public ApiResponse<Country> getResident() {
+        return ApiResponse.<Country>builder().
+                status(200).
+                message("Country here !").
+                success(true).
+                data(countryRepository.findByShortNameEqualsIgnoreCase("uz").get()).
+                build();
+    }
 }

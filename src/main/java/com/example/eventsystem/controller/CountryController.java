@@ -20,6 +20,11 @@ public class CountryController {
         ApiResponse<List<Country>> response = countryService.getAll();
         return ResponseEntity.status(response.isSuccess() ? 200 : 409).body(response);
     }
+    @GetMapping("/resident")
+    public ResponseEntity<?> getResident(){
+        ApiResponse<Country> response= countryService.getResident();
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOne(@PathVariable Long id) {

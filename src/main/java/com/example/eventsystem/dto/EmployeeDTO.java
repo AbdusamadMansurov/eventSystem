@@ -1,6 +1,8 @@
 package com.example.eventsystem.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
 
@@ -13,7 +15,9 @@ import java.util.List;
 @Setter
 @ToString
 public class EmployeeDTO {
+    @NotNull
     private String username, fullName;
+    @Length(min = 6)
     private String password;
     private String phoneFirst;
     private String phoneSecond;

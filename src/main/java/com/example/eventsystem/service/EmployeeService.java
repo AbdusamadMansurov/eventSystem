@@ -42,7 +42,7 @@ public class EmployeeService {
         else if (Boolean.FALSE.equals(active))
             employeePage = employeeRepository.findAllByActiveFalseAndCompany_Id(employee.getCompany().getId(), pageable);
         else
-            employeePage = employeeRepository.findAllByCompany_Id(employee.getCompany().getId(),pageable);
+            employeePage = employeeRepository.findAllByCompany_Id(employee.getCompany().getId(), pageable);
 
         if (employeePage.isEmpty())
             return ApiResponse.<Page<Employee>>builder().
@@ -175,17 +175,19 @@ public class EmployeeService {
         Optional<Employee> byPhoneFirst = employeeRepository.findByPhoneFirstAndCompany_Id(dto.getPhoneFirst(), employee.getCompany().getId());
 
         if (byPhoneFirst.isPresent() && !byPhoneFirst.get().getId().equals(employee1.getId())) {
-                return ApiResponse.<Employee>builder().
-                        message("This phone number is used another employee. Please enter another phone number").
-                        success(false).
-                        status(400).
-                        build();
+            return ApiResponse.<Employee>builder().
+                    message("This phone number is used another employee. Please enter another phone number").
+                    success(false).
+                    status(400).
+                    build();
         }
 
         employee1.setPhoneFirst(dto.getPhoneFirst());
         employee1.setPhoneSecond(dto.getPhoneSecond());
         employee1.setFullName(dto.getFullName());
-        employee1.setPassword(passwordEncoder.encode(dto.getPassword()));
+        if (dto.getPassword() != null && !dto.getPassword().equals("")) {
+            employee1.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
         Optional<Employee> byUsername = employeeRepository.findByUsernameAndCompany_Id(dto.getUsername(), employee.getCompany().getId());
         if (byUsername.isPresent() && !byUsername.get().getId().equals(employee1.getId())) {
             return ApiResponse.<Employee>builder().
@@ -265,7 +267,7 @@ public class EmployeeService {
 
         if (active.equals(Boolean.TRUE))
             employeePage = employeeRepository.findAllByActiveTrueAndCompany_Id(companyId, pageable);
-       else if (active.equals(Boolean.FALSE))
+        else if (active.equals(Boolean.FALSE))
             employeePage = employeeRepository.findAllByActiveFalseAndCompany_Id(companyId, pageable);
         else
             employeePage = employeeRepository.findAllByCompany_Id(companyId, pageable);
@@ -285,9 +287,10 @@ public class EmployeeService {
                 data(employeePage).
                 build();
     }
+
     public ApiResponse<?> editEvent(Long id, Employee employee) {
         Optional<Product> productOptional = productRepository.findByIdAndCategory_Department_Company_Id(id, employee.getCompany().getId());
-        if (productOptional.isEmpty()){
+        if (productOptional.isEmpty()) {
             return ApiResponse.builder().
                     message("Event not found!!!").
                     status(400).

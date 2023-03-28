@@ -108,7 +108,8 @@ public class ProductService {
         product.setDescriptionRu(productDTO.getDescriptionRu());
         product.setDescriptionUz(productDTO.getDescriptionUz());
         product.setDescriptionEn(productDTO.getDescriptionEn());
-        LocalDateTime from = LocalDateTime.parse(productDTO.getFrom());
+        if (productDTO.getFrom() != null && productDTO.getTo() != null){
+            LocalDateTime from = LocalDateTime.parse(productDTO.getFrom());
         LocalDateTime to = LocalDateTime.parse(productDTO.getTo());
         if (productDTO.getFrom() != null) {
             if (LocalDateTime.now().isBefore(from)) {
@@ -121,11 +122,11 @@ public class ProductService {
                         build();
             }
         }
+
         if (productDTO.getTo() != null) {
             if (LocalDateTime.now().isBefore(to) && from.isBefore(to)) {
                 product.setToDate(to);
-            }
-            else {
+            } else {
                 return ApiResponse.builder().
                         message("Wrong finish data time!!!").
                         status(400).
@@ -133,6 +134,7 @@ public class ProductService {
                         build();
             }
         }
+    }
         if (productDTO.getSpeakersId() != null && !productDTO.getSpeakersId().isEmpty()) {
             List<User> speakersList = userRepository.findAllById(productDTO.getSpeakersId());
             for (User user : speakersList) {
