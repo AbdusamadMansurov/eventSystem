@@ -60,7 +60,8 @@ public class AuthService implements UserDetailsService {
             if (userRole.toString().equals(role)) {
                 Map<String, Object> claims = new HashMap<>();
                 claims.put("role", RoleType.valueOf(role));
-
+                employee.setSelectedRole(RoleType.valueOf(role));
+                employeeRepository.save(employee);
                 return ApiResponse.builder()
                         .status(200)
                         .message("Success")
