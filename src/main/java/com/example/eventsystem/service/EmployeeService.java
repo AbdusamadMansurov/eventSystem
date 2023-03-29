@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +35,8 @@ public class EmployeeService {
     private final CountryRepository countryRepository;
     private final RegionRepository regionRepository;
 
-    public ApiResponse<Page<Employee>> getAll(int page, Boolean active, Employee employee) {
-        Pageable pageable = PageRequest.of(page, size);
+    public ApiResponse<Page<Employee>> getAll(boolean desc, String sortBy, int page, Boolean active, Employee employee) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy));
         Page<Employee> employeePage;
         if (Boolean.TRUE.equals(active))
             employeePage = employeeRepository.findAllByActiveTrueAndCompany_Id(employee.getCompany().getId(), pageable);

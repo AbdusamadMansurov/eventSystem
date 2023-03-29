@@ -23,21 +23,23 @@ public class EmployeeController {
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page,
                                     @RequestParam(required = false) Boolean active,
+                                    @RequestParam(defaultValue = "false") boolean desc,
+                                    @RequestParam(defaultValue = "registered_time") String sortBy,
                                     @AuthenticationPrincipal Employee employee) {
-        ApiResponse<Page<Employee>> response = employeeService.getAll(page, active, employee);
+        ApiResponse<Page<Employee>> response = employeeService.getAll(desc, sortBy, page, active, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/getAllByCompany")
     public ResponseEntity<?> getAllByCompany(@RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "null") Boolean active, @AuthenticationPrincipal Employee employee) {
-        ApiResponse<Page<Employee>> response = employeeService.getAllByCompany( page, active, employee);
+        ApiResponse<Page<Employee>> response = employeeService.getAllByCompany(page, active, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOne(@PathVariable Long id,@AuthenticationPrincipal Employee employee) {
-        ApiResponse<Employee> response = employeeService.getOne(id,employee);
+    public ResponseEntity<?> getOne(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
+        ApiResponse<Employee> response = employeeService.getOne(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
@@ -58,8 +60,9 @@ public class EmployeeController {
         ApiResponse<?> response = employeeService.delete(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
+
     @PatchMapping("/{id}")
-    public ResponseEntity<?> editEvent(@PathVariable Long id, @AuthenticationPrincipal Employee employee){
+    public ResponseEntity<?> editEvent(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
         ApiResponse<?> response = employeeService.editEvent(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
