@@ -26,11 +26,10 @@ public class HibernateEventListener implements PostUpdateEventListener {
             Employee employee = (Employee) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             int[] changedIndexes = postUpdateEvent.getDirtyProperties();
             Long id = 0L;
-            for (int i = 0; i < propertyNames.length; i++) {
-                if (propertyNames[i].equals("id")) {
-                    id = Long.valueOf(oldState[i].toString());
-                }
-            }
+            String string = entity.toString();
+            int index1 = string.indexOf("(");
+            int index2 = string.indexOf(",");
+            id = Long.valueOf(string.substring(index1+4, index2));
             for (int i = 0; i < changedIndexes.length; i++) {
                 String columnName = propertyNames[postUpdateEvent.getDirtyProperties()[i]];
                 String oldData = String.valueOf(oldState[changedIndexes[i]]);
