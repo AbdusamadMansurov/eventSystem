@@ -31,9 +31,9 @@ public class UserService {
     private final DepartmentRepository departmentRepository;
     private final CountryRepository countryRepository;
 
-    public ApiResponse<Page<User>> getAll(boolean desc, int page, Employee employee, Boolean active) {
+    public ApiResponse<Page<User>> getAll(boolean desc, String sortBy, int page, Employee employee, Boolean active) {
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, "id"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy));
         Page<User> users;
 
         if (active.equals(Boolean.TRUE)) {
@@ -323,7 +323,7 @@ public class UserService {
                 value(employee.getCompany().getId()).
                 key("department.company.id").
                 build());
-        if (name != null){
+        if (name != null) {
             filterRequests.add(FilterRequest.builder().
                     fieldType(FieldType.STRING).
                     operator(Operator.LIKE).
@@ -331,7 +331,7 @@ public class UserService {
                     key("fullName").
                     build());
         }
-        if (phone != null){
+        if (phone != null) {
             filterRequests.add(FilterRequest.builder().
                     fieldType(FieldType.STRING).
                     operator(Operator.LIKE).
@@ -341,7 +341,7 @@ public class UserService {
         }
 
         List<User> userList = userRepository.findAll(new EntitySpecification<>(searchRequest));
-           return ApiResponse.<List<User>>builder().
+        return ApiResponse.<List<User>>builder().
                 message("Users here!!!").
                 status(200).
                 success(true).
