@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 /**
  * @author Mansurov Abdusamad  *  30.11.2022  *  10:08   *  tedaSystem
  */
@@ -24,8 +25,13 @@ public class RegionService {
     private final CountryRepository countryRepository;
 
 
-    public ApiResponse<List<Region>> getAll() {
-        List<Region> regions = regionRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public ApiResponse<List<Region>> getAll(Long countryId) {
+        List<Region> regions;
+        if (countryId == null) {
+            regions = regionRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        } else {
+            regions = regionRepository.findAllByCountry_Id(countryId, Sort.by(Sort.Direction.ASC, "country_id"));
+        }
         if (regions.isEmpty()) {
             return ApiResponse.<List<Region>>builder().
                     success(false).
@@ -119,4 +125,5 @@ public class RegionService {
                 status(200).
                 build();
     }
+
 }

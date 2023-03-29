@@ -16,10 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Malikov Azizjon    ourSystem    26.12.2022    15:55
@@ -39,6 +36,8 @@ public class CompanyService {
     private final EmployeeRepository employeeRepository;
     private final PasswordEncoder passwordEncoder;
     private final BankInfoRepository bankInfoRepository;
+    private final CountryRepository countryRepository;
+    private final RegionRepository regionRepository;
 
     public ApiResponse<Page<Company>> getAll(int page, Employee employee, Boolean active) {
 
@@ -109,7 +108,7 @@ public class CompanyService {
         company.setStirNumber(companyDTO.getStirNumber());
         if (companyDTO.getMemberOrganizationId() != null) {
             Optional<Company> companyOptional = companyRepository.findById(companyDTO.getMemberOrganizationId());
-            if (companyOptional.isEmpty()){
+            if (companyOptional.isEmpty()) {
                 return ApiResponse.<Company>builder().
                         message("Member company not found!!!").
                         status(400).
@@ -117,19 +116,46 @@ public class CompanyService {
                         build();
             }
         }
-        Address address = new Address();
-        AddressDTO addressDTO = companyDTO.getAddressDTO();
-        Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
-        if (districtOptional.isEmpty()) {
-            return ApiResponse.<Company>builder().
-                    message("District not found!!!").
-                    status(400).
-                    success(false).
-                    build();
+        if (companyDTO.getAddressDTO() != null) {
+            Address address = new Address();
+            AddressDTO addressDTO = companyDTO.getAddressDTO();
+            Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+            if (countryOptional.isEmpty()) {
+                return ApiResponse.<User>builder().
+                        message("Country not found!!!").
+                        success(false).
+                        status(400).
+                        build();
+            }
+            Country country = countryOptional.get();
+            address.setCountry(country);
+
+            if (addressDTO.getRegionId() != null) {
+                Optional<Region> regionOptional = regionRepository.findById(companyDTO.getAddressDTO().getRegionId());
+                if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                    return ApiResponse.<User>builder().
+                            message("Region not found!!!").
+                            success(false).
+                            status(400).
+                            build();
+                }
+                address.setRegion(regionOptional.get());
+            }
+            if (addressDTO.getDistrictId() != null) {
+                Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+                if (districtOptional.isEmpty()) {
+                    return ApiResponse.<User>builder().
+                            message("District not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+                address.setDistrict(districtOptional.get());
+            }
+
+            address.setStreetHome(address.getStreetHome());
+            company.setAddress(address);
         }
-        address.setDistrict(districtOptional.get());
-        address.setStreetHome(address.getStreetHome());
-        company.setAddress(address);
         Company saveCompany = companyRepository.save(company);
         if (companyDTO.getDirector() != null) {
 //            dto.getDirector().setCompanyId(save.getId());
@@ -142,7 +168,7 @@ public class CompanyService {
             EmployeeDTO dto = companyDTO.getDirector();
             if (employeeRepository.findByUsername(dto.getUsername()).isPresent()) {
                 return ApiResponse.<Employee>builder().
-                        message("This username " + dto.getUsername() + " is used. Please enter another phone number").
+                        message("This username " + dto.getUsername() + " is used. Please enter another username").
                         success(false).
                         status(400).
                         build();
@@ -150,19 +176,43 @@ public class CompanyService {
 
             Employee employee = new Employee();
             if (dto.getAddressDTO() != null) {
-                AddressDTO userAddressDTO = dto.getAddressDTO();
-                Address userAddress = new Address();
-
-                Optional<District> districtOptional1 = districtRepository.findById(userAddressDTO.getDistrictId());
-                if (districtOptional1.isEmpty()) {
+                Address address = new Address();
+                AddressDTO addressDTO = dto.getAddressDTO();
+                Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+                if (countryOptional.isEmpty()) {
                     return ApiResponse.<Employee>builder().
-                            message("District not found!!!").
+                            message("Country not found!!!").
                             success(false).
                             status(400).
                             build();
                 }
-                userAddress.setDistrict(districtOptional1.get());
-                userAddress.setStreetHome(address.getStreetHome());
+                Country country = countryOptional.get();
+                address.setCountry(country);
+
+                if (addressDTO.getRegionId() != null) {
+                    Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
+                    if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                        return ApiResponse.<Employee>builder().
+                                message("Region not found!!!").
+                                success(false).
+                                status(400).
+                                build();
+                    }
+                    address.setRegion(regionOptional.get());
+                }
+                if (addressDTO.getDistrictId() != null) {
+                    Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+                    if (districtOptional.isEmpty()) {
+                        return ApiResponse.<Employee>builder().
+                                message("District not found!!!").
+                                status(400).
+                                success(false).
+                                build();
+                    }
+                    address.setDistrict(districtOptional.get());
+                }
+
+                address.setStreetHome(address.getStreetHome());
                 employee.setAddress(address);
             }
             employee.setCompany(saveCompany);
@@ -179,6 +229,7 @@ public class CompanyService {
 
             employee.setRoles(roles);
             Employee save = employeeRepository.save(employee);
+            company.setDirector(save);
         } else {
             Optional<Employee> employeeOptional = employeeRepository.findById(companyDTO.getDirectorId());
             if (employeeOptional.isEmpty()) {
@@ -252,20 +303,46 @@ public class CompanyService {
         }
         company.setMemberOrganization(memberCompanyOptional.get());
 
-        Address address = company.getAddress();
-        AddressDTO addressDTO = dto.getAddressDTO();
-        Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+        if (dto.getAddressDTO() != null) {
+            Address address = new Address();
+            AddressDTO addressDTO = dto.getAddressDTO();
+            Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+            if (countryOptional.isEmpty()) {
+                return ApiResponse.<User>builder().
+                        message("Country not found!!!").
+                        success(false).
+                        status(400).
+                        build();
+            }
+            Country country = countryOptional.get();
+            address.setCountry(country);
 
-        if (districtOptional.isEmpty()) {
-            return ApiResponse.<Company>builder().
-                    message("District not found!!!").
-                    status(400).
-                    success(false).
-                    build();
+            if (addressDTO.getRegionId() != null) {
+                Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
+                if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                    return ApiResponse.<User>builder().
+                            message("Region not found!!!").
+                            success(false).
+                            status(400).
+                            build();
+                }
+                address.setRegion(regionOptional.get());
+            }
+            if (addressDTO.getDistrictId() != null) {
+                Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+                if (districtOptional.isEmpty()) {
+                    return ApiResponse.<User>builder().
+                            message("District not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+                address.setDistrict(districtOptional.get());
+            }
+
+            address.setStreetHome(address.getStreetHome());
+            company.setAddress(address);
         }
-        address.setDistrict(districtOptional.get());
-        address.setStreetHome(address.getStreetHome());
-        company.setAddress(address);
         if (company.getBankInfo()!=null){
             bankInfoRepository.deleteAll(company.getBankInfo());
         }
@@ -300,7 +377,7 @@ public class CompanyService {
         }
 
         Company company = companyOptional.get();
-        if (company != employee.getCompany()) {
+        if (!Objects.equals(company.getId(), employee.getCompany().getId())) {
             return ApiResponse.builder().
                     success(false).
                     status(400).

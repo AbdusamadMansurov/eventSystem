@@ -3,14 +3,9 @@ package com.example.eventsystem.service;
 import com.example.eventsystem.dto.AddressDTO;
 import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.EmployeeDTO;
-import com.example.eventsystem.model.Address;
-import com.example.eventsystem.model.Company;
-import com.example.eventsystem.model.District;
-import com.example.eventsystem.model.Employee;
+import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.RoleType;
-import com.example.eventsystem.repository.CompanyRepository;
-import com.example.eventsystem.repository.DistrictRepository;
-import com.example.eventsystem.repository.EmployeeRepository;
+import com.example.eventsystem.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -35,16 +30,19 @@ public class EmployeeService {
     private final CompanyRepository companyRepository;
     private final DistrictRepository districtRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ProductRepository productRepository;
+    private final CountryRepository countryRepository;
+    private final RegionRepository regionRepository;
 
     public ApiResponse<Page<Employee>> getAll(int page, Boolean active, Employee employee) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Employee> employeePage;
         if (Boolean.TRUE.equals(active))
-            employeePage = employeeRepository.findAllByActiveTrue(pageable);
+            employeePage = employeeRepository.findAllByActiveTrueAndCompany_Id(employee.getCompany().getId(), pageable);
         else if (Boolean.FALSE.equals(active))
-            employeePage = employeeRepository.findAllByActiveFalse(pageable);
+            employeePage = employeeRepository.findAllByActiveFalseAndCompany_Id(employee.getCompany().getId(), pageable);
         else
-            employeePage = employeeRepository.findAll(pageable);
+            employeePage = employeeRepository.findAllByCompany_Id(employee.getCompany().getId(), pageable);
 
         if (employeePage.isEmpty())
             return ApiResponse.<Page<Employee>>builder().
@@ -81,14 +79,6 @@ public class EmployeeService {
     }
 
     public ApiResponse<Employee> add(EmployeeDTO dto, Employee employee1) {
-        Optional<Company> companyOptional = companyRepository.findById(dto.getCompanyId());
-        if (companyOptional.isEmpty()) {
-            return ApiResponse.<Employee>builder().
-                    message("Company not found!!!").
-                    success(false).
-                    status(400).
-                    build();
-        }
 
         if (employeeRepository.findByPhoneFirstAndCompany_Id(dto.getPhoneFirst(), employee1.getCompany().getId()).isPresent()) {
             return ApiResponse.<Employee>builder().
@@ -99,7 +89,7 @@ public class EmployeeService {
         }
         if (employeeRepository.findByUsername(dto.getUsername()).isPresent()) {
             return ApiResponse.<Employee>builder().
-                    message("This username " + dto.getUsername() + " is used. Please enter another phone number").
+                    message("This username " + dto.getUsername() + " is used. Please enter another username").
                     success(false).
                     status(400).
                     build();
@@ -107,27 +97,51 @@ public class EmployeeService {
 
         Employee employee = new Employee();
         if (dto.getAddressDTO() != null) {
-            AddressDTO addressDTO = dto.getAddressDTO();
             Address address = new Address();
-
-            Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
-            if (districtOptional.isEmpty()) {
+            AddressDTO addressDTO = dto.getAddressDTO();
+            Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+            if (countryOptional.isEmpty()) {
                 return ApiResponse.<Employee>builder().
-                        message("District not found!!!").
+                        message("Country not found!!!").
                         success(false).
                         status(400).
                         build();
             }
-            address.setDistrict(districtOptional.get());
+            Country country = countryOptional.get();
+            address.setCountry(country);
+
+            if (addressDTO.getRegionId() != null) {
+                Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
+                if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                    return ApiResponse.<Employee>builder().
+                            message("Region not found!!!").
+                            success(false).
+                            status(400).
+                            build();
+                }
+                address.setRegion(regionOptional.get());
+            }
+            if (addressDTO.getDistrictId() != null) {
+                Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+                if (districtOptional.isEmpty()) {
+                    return ApiResponse.<Employee>builder().
+                            message("District not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+                address.setDistrict(districtOptional.get());
+            }
+
             address.setStreetHome(address.getStreetHome());
             employee.setAddress(address);
         }
-        employee.setCompany(companyOptional.get());
+        employee.setCompany(employee1.getCompany());
         employee.setFullName(dto.getFullName());
         employee.setPhoneFirst(dto.getPhoneFirst());
         employee.setPhoneSecond(dto.getPhoneSecond());
         employee.setPassword(passwordEncoder.encode(dto.getPassword()));
-
+        employee.setUsername(dto.getUsername());
         Set<RoleType> roles = new HashSet<>();
 
         for (String roleString : dto.getRoleList()) {
@@ -145,10 +159,10 @@ public class EmployeeService {
                 build();
     }
 
-    public ApiResponse<Employee> edit(Long id, EmployeeDTO dto) {
+    public ApiResponse<Employee> edit(Long id, EmployeeDTO dto, Employee employee) {
         Optional<Employee> employeeOptional = employeeRepository.findById(id);
 
-        if (employeeOptional.isEmpty()) {
+        if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Employee>builder().
                     message("Employee not found!!!").
                     success(false).
@@ -156,38 +170,45 @@ public class EmployeeService {
                     build();
         }
 
-        Employee employee = employeeOptional.get();
+        Employee employee1 = employeeOptional.get();
 
         Optional<Employee> byPhoneFirst = employeeRepository.findByPhoneFirstAndCompany_Id(dto.getPhoneFirst(), employee.getCompany().getId());
 
-        if (byPhoneFirst.isPresent()) {
-            Employee employee1 = byPhoneFirst.get();
-            if (employee1.getId().equals(employee.getId()))
-                return ApiResponse.<Employee>builder().
-                        message("This phone number is used another employee. Please enter another phone number").
-                        success(false).
-                        status(400).
-                        build();
+        if (byPhoneFirst.isPresent() && !byPhoneFirst.get().getId().equals(employee1.getId())) {
+            return ApiResponse.<Employee>builder().
+                    message("This phone number is used another employee. Please enter another phone number").
+                    success(false).
+                    status(400).
+                    build();
         }
 
-        employee.setPhoneFirst(dto.getPhoneFirst());
-        employee.setPhoneSecond(dto.getPhoneSecond());
-        employee.setFullName(dto.getFullName());
-        employee.setPassword(passwordEncoder.encode(dto.getPassword()));
-
+        employee1.setPhoneFirst(dto.getPhoneFirst());
+        employee1.setPhoneSecond(dto.getPhoneSecond());
+        employee1.setFullName(dto.getFullName());
+        if (dto.getPassword() != null && !dto.getPassword().equals("")) {
+            employee1.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+        Optional<Employee> byUsername = employeeRepository.findByUsernameAndCompany_Id(dto.getUsername(), employee.getCompany().getId());
+        if (byUsername.isPresent() && !byUsername.get().getId().equals(employee1.getId())) {
+            return ApiResponse.<Employee>builder().
+                    message("This phone number is used another employee. Please enter another phone number").
+                    success(false).
+                    status(400).
+                    build();
+        }
         Set<RoleType> roles = new HashSet<>();
 
         for (String roleString : dto.getRoleList()) {
             roles.add(RoleType.valueOf(roleString));
         }
 
-        employee.setRoles(roles);
+        employee1.setRoles(roles);
 
         if (dto.getAddressDTO() != null) {
             Address address = new Address();
             AddressDTO addressDTO = dto.getAddressDTO();
-            if (employee.getAddress() != null)
-                address = employee.getAddress();
+            if (employee1.getAddress() != null)
+                address = employee1.getAddress();
             Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
             if (districtOptional.isEmpty()) {
                 return ApiResponse.<Employee>builder().
@@ -198,10 +219,10 @@ public class EmployeeService {
             }
             address.setDistrict(districtOptional.get());
             address.setStreetHome(address.getStreetHome());
-            employee.setAddress(address);
+            employee1.setAddress(address);
         }
 
-        Employee save = employeeRepository.save(employee);
+        Employee save = employeeRepository.save(employee1);
 
         return ApiResponse.<Employee>builder().
                 message("Employee edited!!!").
@@ -232,7 +253,7 @@ public class EmployeeService {
     }
 
     public ApiResponse<Page<Employee>> getAllByCompany(int page, Boolean active, Employee employee) {
-        Long companyId = employee.getId();
+        Long companyId = employee.getCompany().getId();
         Optional<Company> companyOptional = companyRepository.findById(companyId);
         if (companyOptional.isEmpty()) {
             return ApiResponse.<Page<Employee>>builder().
@@ -244,9 +265,9 @@ public class EmployeeService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Employee> employeePage;
 
-        if (active)
+        if (active.equals(Boolean.TRUE))
             employeePage = employeeRepository.findAllByActiveTrueAndCompany_Id(companyId, pageable);
-        if (!active)
+        else if (active.equals(Boolean.FALSE))
             employeePage = employeeRepository.findAllByActiveFalseAndCompany_Id(companyId, pageable);
         else
             employeePage = employeeRepository.findAllByCompany_Id(companyId, pageable);
@@ -264,6 +285,24 @@ public class EmployeeService {
                 success(true).
                 status(200).
                 data(employeePage).
+                build();
+    }
+
+    public ApiResponse<?> editEvent(Long id, Employee employee) {
+        Optional<Product> productOptional = productRepository.findByIdAndCategory_Department_Company_Id(id, employee.getCompany().getId());
+        if (productOptional.isEmpty()) {
+            return ApiResponse.builder().
+                    message("Event not found!!!").
+                    status(400).
+                    success(false).
+                    build();
+        }
+        employee.setProduct(productOptional.get());
+        return ApiResponse.builder().
+                message("Success edited!!!").
+                status(200).
+                success(true).
+                data(employeeRepository.save(employee)).
                 build();
     }
 }

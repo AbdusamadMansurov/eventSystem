@@ -25,13 +25,19 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/product")
+@RequestMapping("/product")
 public class ProductController {
 
     private final ProductService productService;
     @GetMapping
     public ResponseEntity<?> getAll(@AuthenticationPrincipal Employee employee) {
         ApiResponse<List<Product>> response = productService.getAll(employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/byCategory/{id}")
+    public ResponseEntity<?> getAllByCategory(Long id, @AuthenticationPrincipal Employee employee){
+        ApiResponse<List<Product>> response = productService.getAllByCategory(id,employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

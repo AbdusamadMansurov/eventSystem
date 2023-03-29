@@ -25,8 +25,8 @@ public class CategoryController {
 
     private final CategoryService categoryService;
     @GetMapping
-    public ResponseEntity<?> getAll(@RequestParam Long botId, @AuthenticationPrincipal Employee employee) {
-        ApiResponse<List<Category>> response = categoryService.getAll(botId, employee);
+    public ResponseEntity<?> getAll(@RequestParam Long departmentId, @AuthenticationPrincipal Employee employee) {
+        ApiResponse<List<Category>> response = categoryService.getAll(departmentId, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

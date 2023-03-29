@@ -6,8 +6,8 @@ import com.example.eventsystem.model.Attachment;
 import com.example.eventsystem.model.Bot;
 import com.example.eventsystem.model.Company;
 import com.example.eventsystem.model.Department;
+import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.repository.BotRepository;
-import com.example.eventsystem.repository.CompanyRepository;
 import com.example.eventsystem.repository.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -28,7 +28,6 @@ public class BotService {
     @Value("${page.size}")
     private int size;
     private final BotRepository botRepository;
-    private final CompanyRepository companyRepository;
     private final DepartmentRepository departmentRepository;
 
     public ApiResponse<Page<Bot>> getAll(int page) {
@@ -48,9 +47,9 @@ public class BotService {
                 build();
     }
 
-    public ApiResponse<Bot> getOne(Long id) {
+    public ApiResponse<Bot> getOne(Long id, Employee employee) {
         Optional<Bot> botOptional = botRepository.findById(id);
-        if (botOptional.isEmpty()) {
+        if (botOptional.isEmpty() || !botOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Bot>builder().
                     message("Bot not found!!!").
                     status(400).
@@ -65,16 +64,9 @@ public class BotService {
                 build();
     }
 
-    public ApiResponse<List<Bot>> getAllByCompany(Long companyId) {
-        Optional<Company> companyOptional = companyRepository.findById(companyId);
-        if (companyOptional.isEmpty()) {
-            return ApiResponse.<List<Bot>>builder().
-                    message("Company not found!!!").
-                    status(400).
-                    success(false).
-                    build();
-        }
-        Company company = companyOptional.get();
+    public ApiResponse<List<Bot>> getAllByCompany(Employee employee) {
+
+        Company company = employee.getCompany();
         List<Bot> botList = new ArrayList<>();
         for (Department department : company.getDepartmentList()) {
             if (department.getBot() != null)
@@ -82,7 +74,7 @@ public class BotService {
         }
         if (botList.isEmpty())
             return ApiResponse.<List<Bot>>builder().
-                    message("Bots not found by this company!!!").
+                    message("Bots   not found by this company!!!").
                     status(400).
                     success(false).
                     build();
@@ -95,9 +87,9 @@ public class BotService {
     }
 
     @SneakyThrows
-    public ApiResponse<Bot> add(BotDTO dto) {
+    public ApiResponse<Bot> add(BotDTO dto, Employee employee) {
         Optional<Department> departmentOptional = departmentRepository.findById(dto.getDepartmentId());
-        if (departmentOptional.isEmpty())
+        if (departmentOptional.isEmpty() || !departmentOptional.get().getCompany().getId().equals(employee.getCompany().getId()))
             return ApiResponse.<Bot>builder().
                     message("Department not found!!!").
                     status(400).
@@ -128,9 +120,9 @@ public class BotService {
 
 
     @SneakyThrows
-    public ApiResponse<Bot> edit(Long id, BotDTO dto) {
+    public ApiResponse<Bot> edit(Long id, BotDTO dto, Employee employee) {
         Optional<Bot> botOptional = botRepository.findById(id);
-        if (botOptional.isEmpty()) {
+        if (botOptional.isEmpty()|| !botOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Bot>builder().
                     message("Bot not found!!!").
                     status(400).

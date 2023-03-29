@@ -37,4 +37,5 @@ public class Request {
     @ManyToOne
     private Employee employee;
     private LocalDateTime arrivalTime;
+    private boolean agree;
 }

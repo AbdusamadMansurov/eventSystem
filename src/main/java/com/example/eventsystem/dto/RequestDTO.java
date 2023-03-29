@@ -19,4 +19,5 @@ public class RequestDTO {
     private String aboutProduct, category, requestType;
 
     private Long userId, productId;
+    private boolean agree;
 }

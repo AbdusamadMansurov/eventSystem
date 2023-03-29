@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public class AddressDTO {
 
-    private Long districtId;
+    private Long districtId, regionId, countryId;
     private Double latitude, longitude;
     private String streetHome;
 }

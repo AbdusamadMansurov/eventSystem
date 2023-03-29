@@ -23,14 +23,14 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @GetMapping
-    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page) {
-        ApiResponse<Page<Payment>> response = paymentService.getAll(page);
+    public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page, @AuthenticationPrincipal Employee employee) {
+        ApiResponse<Page<Payment>> response = paymentService.getAll(page, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOne(@PathVariable Long id) {
-        ApiResponse<Payment> response = paymentService.getOne(id);
+    public ResponseEntity<?> getOne(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
+        ApiResponse<Payment> response = paymentService.getOne(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
@@ -41,8 +41,8 @@ public class PaymentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        ApiResponse<?> response = paymentService.delete(id);
+    public ResponseEntity<?> delete(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
+        ApiResponse<?> response = paymentService.delete(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

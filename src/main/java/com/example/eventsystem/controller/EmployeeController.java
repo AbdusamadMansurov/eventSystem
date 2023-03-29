@@ -22,7 +22,7 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page,
-                                    @RequestParam Boolean active,
+                                    @RequestParam(required = false) Boolean active,
                                     @AuthenticationPrincipal Employee employee) {
         ApiResponse<Page<Employee>> response = employeeService.getAll(page, active, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
@@ -30,7 +30,7 @@ public class EmployeeController {
 
     @GetMapping("/getAllByCompany")
     public ResponseEntity<?> getAllByCompany(@RequestParam(defaultValue = "0") int page,
-                                             @RequestParam Boolean active, @AuthenticationPrincipal Employee employee) {
+                                             @RequestParam(defaultValue = "null") Boolean active, @AuthenticationPrincipal Employee employee) {
         ApiResponse<Page<Employee>> response = employeeService.getAllByCompany( page, active, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
@@ -48,14 +48,19 @@ public class EmployeeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> edit(@PathVariable Long id, @RequestBody EmployeeDTO dto) {
-        ApiResponse<Employee> response = employeeService.edit(id, dto);
+    public ResponseEntity<?> edit(@PathVariable Long id, @RequestBody EmployeeDTO dto, @AuthenticationPrincipal Employee employee) {
+        ApiResponse<Employee> response = employeeService.edit(id, dto, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
         ApiResponse<?> response = employeeService.delete(id, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> editEvent(@PathVariable Long id, @AuthenticationPrincipal Employee employee){
+        ApiResponse<?> response = employeeService.editEvent(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

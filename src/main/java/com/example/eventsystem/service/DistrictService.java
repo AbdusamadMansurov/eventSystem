@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 /**
  * @author Mansurov Abdusamad  *  30.11.2022  *  10:08   *  tedaSystem
  */
@@ -22,8 +23,13 @@ public class DistrictService {
     private final DistrictRepository districtRepository;
     private final RegionRepository regionRepository;
 
-    public ApiResponse<List<District>> getAll() {
-        List<District> districts = districtRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public ApiResponse<List<District>> getAll(Long regionId) {
+        List<District> districts;
+        if (regionId == null) {
+            districts = districtRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+        } else {
+            districts = districtRepository.findAllByRegion_Id(regionId, Sort.by(Sort.Direction.ASC, "region_id"));
+        }
         if (districts.isEmpty()) {
             return ApiResponse.<List<District>>builder().
                     success(false).

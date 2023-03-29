@@ -1,30 +1,32 @@
 package com.example.eventsystem.component;
 
-import com.example.eventsystem.ReadXLSX;
-import com.example.eventsystem.model.*;
+import com.example.eventsystem.model.BankInfo;
+import com.example.eventsystem.model.Company;
+import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.model.enums.RoleType;
-import com.example.eventsystem.repository.*;
+import com.example.eventsystem.repository.BankInfoRepository;
+import com.example.eventsystem.repository.CompanyRepository;
+import com.example.eventsystem.repository.EmployeeRepository;
+import com.example.eventsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 
 @Component
 @RequiredArgsConstructor
 public class DataLoader implements CommandLineRunner {
     @Value("${spring.sql.init.mode}")
     private String runMode;
-    private final EmployeeRepository employeeRepository;
     private final CompanyRepository companyRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final BankInfoRepository bankInfoRepository;
-    private final ReadXLSX readXLSX;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
@@ -37,7 +39,7 @@ public class DataLoader implements CommandLineRunner {
             employee.setUsername("Abdusamad");
             employee.setPassword(passwordEncoder.encode("123123"));
             employee.setPhoneFirst("+998977515747");
-            employee.setSelectedRole(RoleType.DIRECTOR);
+//            employee.setSelectedRole(RoleType.DIRECTOR);
             Set<RoleType> roles = new LinkedHashSet<>();
             roles.add(RoleType.DIRECTOR);
             employee.setRoles(roles);
@@ -62,10 +64,29 @@ public class DataLoader implements CommandLineRunner {
             bankInfo1.setAccountNumber(321);
             bankInfos.add(bankInfo1);
             bankInfoRepository.saveAll(bankInfos);
-
         }
-        if (runMode.equals("never")){
-            readXLSX.main();
+//        if (runMode.equals("never")) {
+//            List<Company> companies = companyRepository.findAll();
+//            for (Company company : companies) {
+//                Employee director = company.getDirector();
+//                if (director != null && company.getAddress() != null) {
+//                    director.setAddress(company.getAddress());
+//                    Optional<User> userOptional = userRepository.findByPhone(director.getPhoneFirst());
+//                    if (userOptional.isEmpty())
+//                        continue;
+//                    User user = userOptional.get();
+//                    user.setAddress(company.getAddress());
+//                    employeeRepository.save(director);
+//                    userRepository.save(user);
+
+//            Optional<Employee> employeeOptional = employeeRepository.findById(3415L);
+//            Employee employee = employeeOptional.get();
+//            employee.setPassword(passwordEncoder.encode("123123"));
+//            employee.setPhoneFirst("+998977515747");
+//            employeeRepository.save(employee);
+//        }
         }
     }
-}
+
+
+

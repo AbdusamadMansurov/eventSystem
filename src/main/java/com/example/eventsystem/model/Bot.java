@@ -18,8 +18,10 @@ public class Bot {
     private Long id;
     @Column(unique = true, nullable = false)
     private String token, username;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Department department;
     @OneToMany
@@ -37,7 +39,7 @@ public class Bot {
 //    private List<Vacancy> vacancies;
     @Column(nullable = false)
     private boolean active = true;
-
     @ManyToOne(cascade = CascadeType.ALL)
+    @ToString.Exclude
     private Attachment logo;
 }

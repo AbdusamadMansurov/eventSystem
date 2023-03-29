@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -93,6 +94,12 @@ public class ProductService {
             address.setStreetHome(addressDTO.getStreetHome());
             product.setAddress(address);
         }
+        product.setAgreeTextEn(product.getAgreeTextEn());
+        product.setAgreeTextRu(product.getAgreeTextRu());
+        product.setAgreeTextUz(product.getAgreeTextUz());
+        product.setTextEn(product.getTextEn());
+        product.setTextRu(product.getTextRu());
+        product.setTextUz(product.getTextUz());
         product.setCategory(categoryOptional.get());
         product.setPrice(productDTO.getPrice());
         product.setNameRu(productDTO.getNameRu());
@@ -101,6 +108,33 @@ public class ProductService {
         product.setDescriptionRu(productDTO.getDescriptionRu());
         product.setDescriptionUz(productDTO.getDescriptionUz());
         product.setDescriptionEn(productDTO.getDescriptionEn());
+        if (productDTO.getFrom() != null && productDTO.getTo() != null){
+            LocalDateTime from = LocalDateTime.parse(productDTO.getFrom());
+        LocalDateTime to = LocalDateTime.parse(productDTO.getTo());
+        if (productDTO.getFrom() != null) {
+            if (LocalDateTime.now().isBefore(from)) {
+                product.setFromDate(from);
+            } else {
+                return ApiResponse.builder().
+                        message("Wrong start data time!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+        }
+
+        if (productDTO.getTo() != null) {
+            if (LocalDateTime.now().isBefore(to) && from.isBefore(to)) {
+                product.setToDate(to);
+            } else {
+                return ApiResponse.builder().
+                        message("Wrong finish data time!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+        }
+    }
         if (productDTO.getSpeakersId() != null && !productDTO.getSpeakersId().isEmpty()) {
             List<User> speakersList = userRepository.findAllById(productDTO.getSpeakersId());
             for (User user : speakersList) {
@@ -178,6 +212,12 @@ public class ProductService {
             address.setStreetHome(addressDTO.getStreetHome());
             product.setAddress(address);
         }
+        product.setAgreeTextEn(product.getAgreeTextEn());
+        product.setAgreeTextRu(product.getAgreeTextRu());
+        product.setAgreeTextUz(product.getAgreeTextUz());
+        product.setTextEn(product.getTextEn());
+        product.setTextRu(product.getTextRu());
+        product.setTextUz(product.getTextUz());
         product.setNameUz(productDTO.getNameUz());
         product.setNameRu(productDTO.getNameRu());
         product.setNameEn(productDTO.getNameEn());
@@ -186,6 +226,31 @@ public class ProductService {
         product.setDescriptionEn(productDTO.getDescriptionEn());
         product.setPrice(productDTO.getPrice());
         product.setCategory(optionalCategory.get());
+        LocalDateTime from = LocalDateTime.parse(productDTO.getFrom());
+        LocalDateTime to = LocalDateTime.parse(productDTO.getTo());
+        if (productDTO.getFrom() != null) {
+            if (LocalDateTime.now().isBefore(from)) {
+                product.setFromDate(from);
+            } else {
+                return ApiResponse.builder().
+                        message("Wrong start data time!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+        }
+        if (productDTO.getTo() != null) {
+            if (LocalDateTime.now().isBefore(to) && from.isBefore(to)) {
+                product.setToDate(to);
+            }
+            else {
+                return ApiResponse.builder().
+                        message("Wrong finish data time!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+        }
         if (productDTO.getSpeakersId() != null && !productDTO.getSpeakersId().isEmpty()) {
             List<User> speakersList = userRepository.findAllById(productDTO.getSpeakersId());
             for (User user : speakersList) {
@@ -240,4 +305,21 @@ public class ProductService {
                 .body(attachment.getBytes());
     }
 
+    public ApiResponse<List<Product>> getAllByCategory(Long id, Employee employee) {
+        Optional<Category> categoryOptional = categoryRepository.findById(id);
+        if (categoryOptional.isEmpty() || !categoryOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())){
+            return ApiResponse.<List<Product>>builder().
+                    message("Category not found!!!").
+                    status(400).
+                    success(false).
+                    build();
+        }
+        List<Product> productList = productRepository.findAllByCategoryId(id);
+        return ApiResponse.<List<Product>>builder().
+                message("Here").
+                status(200).
+                success(true).
+                data(productList).
+                build();
+    }
 }

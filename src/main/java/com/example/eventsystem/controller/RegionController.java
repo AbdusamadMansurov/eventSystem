@@ -17,8 +17,8 @@ public class RegionController {
     private final RegionService regionService;
 
     @GetMapping
-    public ResponseEntity<?> getAll() {
-        ApiResponse<List<Region>> response = regionService.getAll();
+    public ResponseEntity<?> getAll(@RequestParam(required = false) Long countryId) {
+        ApiResponse<List<Region>> response = regionService.getAll(countryId);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
