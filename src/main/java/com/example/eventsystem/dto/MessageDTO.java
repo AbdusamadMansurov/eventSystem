@@ -1,6 +1,6 @@
-package com.example.avantageevents.dto;
+package com.example.eventsystem.dto;
 
-import com.example.avantageevents.model.enums.MessageType;
+import com.example.eventsystem.model.enums.MessageType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
