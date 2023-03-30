@@ -186,9 +186,9 @@ public class EmployeeService {
         employee1.setPhoneFirst(dto.getPhoneFirst());
         employee1.setPhoneSecond(dto.getPhoneSecond());
         employee1.setFullName(dto.getFullName());
-        if (dto.getPassword() != null && !dto.getPassword().equals("")) {
-            employee1.setPassword(passwordEncoder.encode(dto.getPassword()));
-        }
+//        if (dto.getPassword() != null && !dto.getPassword().equals("")) {
+//            employee1.setPassword(passwordEncoder.encode(dto.getPassword()));
+//        }
         Optional<Employee> byUsername = employeeRepository.findByUsernameAndCompany_Id(dto.getUsername(), employee.getCompany().getId());
         if (byUsername.isPresent() && !byUsername.get().getId().equals(employee1.getId())) {
             return ApiResponse.<Employee>builder().
