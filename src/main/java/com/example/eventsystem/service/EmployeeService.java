@@ -209,20 +209,46 @@ public class EmployeeService {
 
         if (dto.getAddressDTO() != null) {
             Address address = new Address();
-            AddressDTO addressDTO = dto.getAddressDTO();
-            if (employee1.getAddress() != null)
+            if (employee1.getAddress() != null){
                 address = employee1.getAddress();
-            Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
-            if (districtOptional.isEmpty()) {
+            }
+            AddressDTO addressDTO = dto.getAddressDTO();
+            Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+            if (countryOptional.isEmpty()) {
                 return ApiResponse.<Employee>builder().
-                        message("District not found!!!").
+                        message("Country not found!!!").
                         success(false).
                         status(400).
                         build();
             }
-            address.setDistrict(districtOptional.get());
+            Country country = countryOptional.get();
+            address.setCountry(country);
+
+            if (addressDTO.getRegionId() != null) {
+                Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
+                if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                    return ApiResponse.<Employee>builder().
+                            message("Region not found!!!").
+                            success(false).
+                            status(400).
+                            build();
+                }
+                address.setRegion(regionOptional.get());
+            }
+            if (addressDTO.getDistrictId() != null) {
+                Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+                if (districtOptional.isEmpty()) {
+                    return ApiResponse.<Employee>builder().
+                            message("District not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+                address.setDistrict(districtOptional.get());
+            }
+
             address.setStreetHome(address.getStreetHome());
-            employee1.setAddress(address);
+            employee.setAddress(address);
         }
 
         Employee save = employeeRepository.save(employee1);
