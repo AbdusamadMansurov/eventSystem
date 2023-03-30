@@ -151,9 +151,7 @@ public class EmployeeService {
 
         employee.setRoles(roles);
         Employee save = employeeRepository.save(employee);
-        save.setPassword(passwordEncoder.encode(dto.getPassword()));
-        employeeRepository.save(save);
-
+        edit(save.getId(), dto, employee1);
         return ApiResponse.<Employee>builder().
                 message("Employee saved!!!").
                 success(true).
