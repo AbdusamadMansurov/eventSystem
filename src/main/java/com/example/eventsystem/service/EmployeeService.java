@@ -151,7 +151,7 @@ public class EmployeeService {
 
         employee.setRoles(roles);
         Employee save = employeeRepository.save(employee);
-
+        edit(save.getId(), dto, employee1);
         return ApiResponse.<Employee>builder().
                 message("Employee saved!!!").
                 success(true).
@@ -207,20 +207,46 @@ public class EmployeeService {
 
         if (dto.getAddressDTO() != null) {
             Address address = new Address();
-            AddressDTO addressDTO = dto.getAddressDTO();
-            if (employee1.getAddress() != null)
+            if (employee1.getAddress() != null) {
                 address = employee1.getAddress();
-            Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
-            if (districtOptional.isEmpty()) {
+            }
+            AddressDTO addressDTO = dto.getAddressDTO();
+            Optional<Country> countryOptional = countryRepository.findById(addressDTO.getCountryId());
+            if (countryOptional.isEmpty()) {
                 return ApiResponse.<Employee>builder().
-                        message("District not found!!!").
+                        message("Country not found!!!").
                         success(false).
                         status(400).
                         build();
             }
-            address.setDistrict(districtOptional.get());
+            Country country = countryOptional.get();
+            address.setCountry(country);
+
+            if (addressDTO.getRegionId() != null) {
+                Optional<Region> regionOptional = regionRepository.findById(dto.getAddressDTO().getRegionId());
+                if (regionOptional.isEmpty() || !regionOptional.get().getCountry().getId().equals(country.getId())) {
+                    return ApiResponse.<Employee>builder().
+                            message("Region not found!!!").
+                            success(false).
+                            status(400).
+                            build();
+                }
+                address.setRegion(regionOptional.get());
+            }
+            if (addressDTO.getDistrictId() != null) {
+                Optional<District> districtOptional = districtRepository.findById(addressDTO.getDistrictId());
+                if (districtOptional.isEmpty()) {
+                    return ApiResponse.<Employee>builder().
+                            message("District not found!!!").
+                            status(400).
+                            success(false).
+                            build();
+                }
+                address.setDistrict(districtOptional.get());
+            }
+
             address.setStreetHome(address.getStreetHome());
-            employee1.setAddress(address);
+            employee.setAddress(address);
         }
 
         Employee save = employeeRepository.save(employee1);
@@ -289,8 +315,23 @@ public class EmployeeService {
                 build();
     }
 
-    public ApiResponse<?> editEvent(Long id, Employee employee) {
-        Optional<Product> productOptional = productRepository.findByIdAndCategory_Department_Company_Id(id, employee.getCompany().getId());
+    public ApiResponse<?> editEvent(Long operatorId, Long eventId, Employee employee) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(operatorId);
+        if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.builder().
+                    message("Operator not found!!!").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        boolean isOperator = false;
+        Employee operator = employeeOptional.get();
+        for (RoleType role : operator.getRoles()) {
+            if (role.equals(RoleType.OPERATOR)) {
+                isOperator = true;
+            }
+        }
+        Optional<Product> productOptional = productRepository.findByIdAndCategory_Department_Company_Id(eventId, employee.getCompany().getId());
         if (productOptional.isEmpty()) {
             return ApiResponse.builder().
                     message("Event not found!!!").
@@ -298,12 +339,20 @@ public class EmployeeService {
                     success(false).
                     build();
         }
-        employee.setProduct(productOptional.get());
-        return ApiResponse.builder().
-                message("Success edited!!!").
-                status(200).
-                success(true).
-                data(employeeRepository.save(employee)).
-                build();
+        if (isOperator) {
+            employee.setProduct(productOptional.get());
+            return ApiResponse.builder().
+                    message("Success edited!!!").
+                    status(200).
+                    success(true).
+                    data(employeeRepository.save(employee)).
+                    build();
+        }else {
+            return ApiResponse.builder().
+                    message("This user isn't operator!!!").
+                    status(400).
+                    success(false).
+                    build();
+        }
     }
 }

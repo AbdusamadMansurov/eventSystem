@@ -62,8 +62,8 @@ public class EmployeeController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> editEvent(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
-        ApiResponse<?> response = employeeService.editEvent(id, employee);
+    public ResponseEntity<?> editEvent(@PathVariable Long operatorId,@RequestParam Long eventId ,  @AuthenticationPrincipal Employee employee) {
+        ApiResponse<?> response = employeeService.editEvent(operatorId,eventId, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 }

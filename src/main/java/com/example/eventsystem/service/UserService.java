@@ -30,6 +30,7 @@ public class UserService {
     private final DistrictRepository districtRepository;
     private final DepartmentRepository departmentRepository;
     private final CountryRepository countryRepository;
+    private final RequestService requestService;
 
     public ApiResponse<Page<User>> getAll(boolean desc, String sortBy, int page, Employee employee, Boolean active) {
 
@@ -172,8 +173,10 @@ public class UserService {
             user.setAddress(address);
         }
 
-
         User save = userRepository.save(user);
+        if (employee.getProduct() != null) {
+            requestService.add(save.getId(), employee.getProduct().getId(), employee);
+        }
         return ApiResponse.builder().
                 message("User is created").
                 status(201).
