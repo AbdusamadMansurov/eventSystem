@@ -207,7 +207,7 @@ public class EmployeeService {
 
         if (dto.getAddressDTO() != null) {
             Address address = new Address();
-            if (employee1.getAddress() != null){
+            if (employee1.getAddress() != null) {
                 address = employee1.getAddress();
             }
             AddressDTO addressDTO = dto.getAddressDTO();
@@ -315,8 +315,23 @@ public class EmployeeService {
                 build();
     }
 
-    public ApiResponse<?> editEvent(Long id, Employee employee) {
-        Optional<Product> productOptional = productRepository.findByIdAndCategory_Department_Company_Id(id, employee.getCompany().getId());
+    public ApiResponse<?> editEvent(Long operatorId, Long eventId, Employee employee) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(operatorId);
+        if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.builder().
+                    message("Operator not found!!!").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        boolean isOperator = false;
+        Employee operator = employeeOptional.get();
+        for (RoleType role : operator.getRoles()) {
+            if (role.equals(RoleType.OPERATOR)) {
+                isOperator = true;
+            }
+        }
+        Optional<Product> productOptional = productRepository.findByIdAndCategory_Department_Company_Id(eventId, employee.getCompany().getId());
         if (productOptional.isEmpty()) {
             return ApiResponse.builder().
                     message("Event not found!!!").
@@ -324,12 +339,20 @@ public class EmployeeService {
                     success(false).
                     build();
         }
-        employee.setProduct(productOptional.get());
-        return ApiResponse.builder().
-                message("Success edited!!!").
-                status(200).
-                success(true).
-                data(employeeRepository.save(employee)).
-                build();
+        if (isOperator) {
+            employee.setProduct(productOptional.get());
+            return ApiResponse.builder().
+                    message("Success edited!!!").
+                    status(200).
+                    success(true).
+                    data(employeeRepository.save(employee)).
+                    build();
+        }else {
+            return ApiResponse.builder().
+                    message("This user isn't operator!!!").
+                    status(400).
+                    success(false).
+                    build();
+        }
     }
 }
