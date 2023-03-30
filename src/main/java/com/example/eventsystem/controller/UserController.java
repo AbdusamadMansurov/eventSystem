@@ -26,7 +26,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getAllByCompany(@RequestParam(defaultValue = "0") int page,
                                              @RequestParam(defaultValue = "false") boolean desc,
-                                             @RequestParam(defaultValue = "registered_time") String sortBy,
+                                             @RequestParam(defaultValue = "registeredTime") String sortBy,
                                              @AuthenticationPrincipal Employee employee,
                                              @RequestParam(defaultValue = "null") Boolean active) {
         ApiResponse<Page<User>> response = userService.getAll(desc, sortBy, page, employee, active);
