@@ -1,7 +1,9 @@
 package com.example.eventsystem.service;
 
 import com.example.eventsystem.dto.ApiResponse;
+import com.example.eventsystem.dto.CustomPage;
 import com.example.eventsystem.dto.MessageDTO;
+import com.example.eventsystem.dto.MessageResponseDTO;
 import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.model.Message;
 import com.example.eventsystem.model.Request;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,10 +53,40 @@ public class MessageService {
         return true;
     }
 
-    public ApiResponse<Page<Message>> getAllByEmployee(Employee employee, int page, int size) {
-        Page<Message> messages;
-        ApiResponse<Page<Message>> response = new ApiResponse<>();
-        messages = messageRepository.findAllByEmployeeAndSendTime(employee, null, PageRequest.of(page, size));
+//    public ApiResponse<Page<Message>> getAllByEmployee(Employee employee, int page, int size) {
+//        Page<Message> messages;
+//        ApiResponse<Page<Message>> response = new ApiResponse<>();
+//        messages = messageRepository.findAllByEmployeeAndSendTime(employee, null, PageRequest.of(page, size));
+//
+//        response.setMessage("Here!!!");
+//        response.setStatus(200);
+//        response.setSuccess(true);
+//        response.setData(messages);
+//        return response;
+//    }
+
+    public ApiResponse<CustomPage<MessageResponseDTO>> getAllByEmployee(Employee employee, int page, int size) {
+        Page<Message> messagePage = messageRepository.findAllByEmployeeAndSendTime(employee, null, PageRequest.of(page, size));
+        CustomPage<MessageResponseDTO> messages = new CustomPage<>();
+        ApiResponse<CustomPage<MessageResponseDTO>> response = new ApiResponse<>();
+        List<MessageResponseDTO> messageResponseDTOList = new ArrayList<>();
+        for (Message message : messagePage.getContent()) {
+            MessageResponseDTO messageResponseDTO = new MessageResponseDTO();
+            messageResponseDTO.setId(message.getId());
+            messageResponseDTO.setPhone(message.getUser().getPhone());
+            messageResponseDTO.setText(message.getText());
+            messageResponseDTOList.add(messageResponseDTO);
+        }
+        messages.setContent(messageResponseDTOList);
+        messages.setEmpty(messagePage.isEmpty());
+        messages.setSize(messagePage.getSize());
+        messages.setNumber(messagePage.getNumber());
+        messages.setNumberOfElements(messagePage.getNumberOfElements());
+        messages.setTotalElements(messagePage.getTotalElements());
+        messages.setTotalPages(messagePage.getTotalPages());
+        messages.setSize(messagePage.getSize());
+        messages.setLast(messagePage.isLast());
+        messages.setFirst(messagePage.isFirst());
 
         response.setMessage("Here!!!");
         response.setStatus(200);
@@ -61,6 +94,8 @@ public class MessageService {
         response.setData(messages);
         return response;
     }
+
+
 
     public ApiResponse<?> add(MessageDTO dto,Employee employee) {
         Message message = new Message();

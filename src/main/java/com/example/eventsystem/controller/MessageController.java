@@ -1,7 +1,9 @@
 package com.example.eventsystem.controller;
 
 import com.example.eventsystem.dto.ApiResponse;
+import com.example.eventsystem.dto.CustomPage;
 import com.example.eventsystem.dto.MessageDTO;
+import com.example.eventsystem.dto.MessageResponseDTO;
 import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.model.Message;
 import com.example.eventsystem.service.MessageService;
@@ -34,16 +36,8 @@ public class MessageController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @AuthenticationPrincipal Employee employee) {
-        ApiResponse<Page<Message>> allByEmployee = messageService.getAllByEmployee(employee, page, size);
+        ApiResponse<CustomPage<MessageResponseDTO>> allByEmployee = messageService.getAllByEmployee(employee, page, size);
         return ResponseEntity.status(allByEmployee.getStatus()).body(allByEmployee);
     }
 
-    @PostMapping
-    public ResponseEntity<?> add(
-            @RequestBody MessageDTO messageDTO,
-            @RequestBody Employee employee
-    ) {
-        ApiResponse<?> add = messageService.add(messageDTO, employee);
-        return ResponseEntity.status(add.getStatus()).body(add);
-    }
 }
