@@ -23,8 +23,8 @@ public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificati
     Optional<User> findByPhoneAndDepartment_Id(String phone, Long departmentId);
     Optional<User> findByPhoneAndDepartment_Company_Id(String phone, Long companyId);
     Optional<User> findByEmailAndDepartment_Id(String email, Long departmentId);
-    Optional<User> findByEmailAndDepartment_Company_Id(String email, Long companyId);
-    Optional<User> findByEmailAndPhoneAndDepartment_Company_Id(String email, String phone, Long companyId);
+//    Optional<User> findByEmailAndDepartment_Company_Id(String email, Long companyId);
+//    Optional<User> findByEmailAndPhoneAndDepartment_Company_Id(String email, String phone, Long companyId);
     Page<User> findAllByDepartment_Company_Id(Long companyId, Pageable pageable);
     Page<User> findAllByActiveTrueAndDepartment_Company_Id(Long companyId, Pageable pageable);
     Page<User> findAllByActiveFalseAndDepartment_Company_Id(Long companyId, Pageable pageable);

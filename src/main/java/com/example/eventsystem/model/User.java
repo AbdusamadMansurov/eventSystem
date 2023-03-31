@@ -50,10 +50,6 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Department department;
-    //    @JsonIgnore
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @ToString.Exclude
-//    private Bot bot;
     private int count = 0;
     @JsonFormat(pattern = "dd.MM.yyyy")
     private LocalDate brithDate;
@@ -71,7 +67,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @JsonIgnore
     @Column(unique = true)
-    private UUID qrcode;
+    private UUID qrcode = UUID.randomUUID();
     @Enumerated(EnumType.STRING)
     private UserRole role;
 

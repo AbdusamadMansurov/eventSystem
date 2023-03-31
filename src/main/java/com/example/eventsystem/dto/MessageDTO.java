@@ -1,8 +1,12 @@
 package com.example.eventsystem.dto;
 
 import com.example.eventsystem.model.enums.MessageType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +17,7 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class MessageDTO {
-    private  Long id;
+
     private String text;
     private Long user_id;
     private Long request_id;

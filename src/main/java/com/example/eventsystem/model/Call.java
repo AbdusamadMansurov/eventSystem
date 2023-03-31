@@ -27,12 +27,15 @@ public class Call {
 
     @ManyToOne
     private Employee employee;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdTime = LocalDateTime.now();
 
     private LocalDate nextConnectionDate;
 
     private String description;
+
+    @ManyToOne
+    private Request request;
 
     @OneToMany
     @ToString.Exclude
