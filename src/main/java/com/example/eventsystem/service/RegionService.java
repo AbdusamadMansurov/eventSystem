@@ -32,13 +32,6 @@ public class RegionService {
         } else {
             regions = regionRepository.findAllByCountry_Id(countryId, Sort.by(Sort.Direction.ASC, "country_id"));
         }
-        if (regions.isEmpty()) {
-            return ApiResponse.<List<Region>>builder().
-                    success(false).
-                    status(400).
-                    message("Regions are not found !").
-                    build();
-        }
         return ApiResponse.<List<Region>>builder().
                 success(true).
                 status(200).

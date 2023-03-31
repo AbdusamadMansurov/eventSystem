@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,13 +31,7 @@ public class DistrictService {
         } else {
             districts = districtRepository.findAllByRegion_Id(regionId, Sort.by(Sort.Direction.ASC, "region_id"));
         }
-        if (districts.isEmpty()) {
-            return ApiResponse.<List<District>>builder().
-                    success(false).
-                    status(400).
-                    message("Districts are empty !").
-                    build();
-        }
+
         return ApiResponse.<List<District>>builder().
                 success(true).
                 status(200).
