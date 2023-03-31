@@ -270,11 +270,11 @@ public class UserService {
             address.setStreetHome(address.getStreetHome());
             user.setAddress(address);
         }
-        userRepository.save(user);
         return ApiResponse.builder().
                 message("User is edited!").
                 status(200).
                 success(true).
+                data(userRepository.save(user)).
                 build();
     }
 
