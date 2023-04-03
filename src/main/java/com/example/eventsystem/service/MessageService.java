@@ -44,7 +44,7 @@ public class MessageService {
         try {
             for (Long aLong : list) {
                 Optional<Message> byId = messageRepository.findById(aLong);
-                if (byId.isPresent()){
+                if (byId.isPresent()) {
                     Message message = byId.get();
                     message.setSendTime(LocalDateTime.now());
                     messageRepository.save(message);
@@ -103,10 +103,9 @@ public class MessageService {
         }
         messages.setContent(messageResponseDTOList);
         messages.setEmpty(messagePage.isEmpty());
-        messages.setSize(messagePage.getSize() + count);
         messages.setNumber(messagePage.getNumber());
-        messages.setNumberOfElements(messagePage.getNumberOfElements());
-        messages.setTotalElements(messagePage.getTotalElements());
+        messages.setNumberOfElements(messagePage.getNumberOfElements() + count);
+        messages.setTotalElements(messagePage.getTotalElements() + count);
         messages.setTotalPages(messagePage.getTotalPages());
         messages.setSize(messagePage.getSize());
         messages.setLast(messagePage.isLast());
