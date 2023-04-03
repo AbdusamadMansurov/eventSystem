@@ -19,9 +19,14 @@ public class Change {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long columnId;
+
+    @Column(columnDefinition = "text")
     private String columnName, tableName, oldData, newData;
+
     @ManyToOne
     private Employee employee;
+
     private LocalDateTime dateTime;
 }
