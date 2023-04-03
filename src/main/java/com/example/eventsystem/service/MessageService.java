@@ -42,11 +42,14 @@ public class MessageService {
 
     public boolean editStatus(List<Long> list) {
         try {
-            List<Message> messageList = messageRepository.findAllById(list);
-            messageList.forEach((message) -> {
-                message.setSendTime(LocalDateTime.now());
-            });
-            messageRepository.saveAll(messageList);
+            for (Long aLong : list) {
+                Optional<Message> byId = messageRepository.findById(aLong);
+                if (byId.isPresent()){
+                    Message message = byId.get();
+                    message.setSendTime(LocalDateTime.now());
+                    messageRepository.save(message);
+                }
+            }
         } catch (Exception e) {
             return false;
         }
@@ -70,16 +73,37 @@ public class MessageService {
         CustomPage<MessageResponseDTO> messages = new CustomPage<>();
         ApiResponse<CustomPage<MessageResponseDTO>> response = new ApiResponse<>();
         List<MessageResponseDTO> messageResponseDTOList = new ArrayList<>();
+        int count = 0;
         for (Message message : messagePage.getContent()) {
             MessageResponseDTO messageResponseDTO = new MessageResponseDTO();
             messageResponseDTO.setId(message.getId());
             messageResponseDTO.setPhone(message.getUser().getPhone());
             messageResponseDTO.setText(message.getText());
-            messageResponseDTOList.add(messageResponseDTO);
+            if (message.getText().length() > 145) {
+                while (message.getText().length() > 145) {
+                    MessageResponseDTO messageResponseDTO1 = new MessageResponseDTO();
+                    messageResponseDTO1.setId(message.getId());
+                    messageResponseDTO1.setText(message.getText().substring(0, 140));
+                    messageResponseDTO1.setPhone(message.getUser().getPhone());
+                    message.setText(message.getText().substring(140));
+                    messageResponseDTOList.add(messageResponseDTO1);
+                    count++;
+                }
+                if (message.getText().length() > 0) {
+                    MessageResponseDTO messageResponseDTO1 = new MessageResponseDTO();
+                    messageResponseDTO1.setId(message.getId());
+                    messageResponseDTO1.setText(message.getText().substring(0, message.getText().length()));
+                    messageResponseDTO1.setPhone(message.getUser().getPhone());
+                    messageResponseDTOList.add(messageResponseDTO1);
+                    count++;
+                }
+            } else {
+                messageResponseDTOList.add(messageResponseDTO);
+            }
         }
         messages.setContent(messageResponseDTOList);
         messages.setEmpty(messagePage.isEmpty());
-        messages.setSize(messagePage.getSize());
+        messages.setSize(messagePage.getSize() + count);
         messages.setNumber(messagePage.getNumber());
         messages.setNumberOfElements(messagePage.getNumberOfElements());
         messages.setTotalElements(messagePage.getTotalElements());
@@ -96,8 +120,7 @@ public class MessageService {
     }
 
 
-
-    public ApiResponse<?> add(MessageDTO dto,Employee employee) {
+    public ApiResponse<?> add(MessageDTO dto, Employee employee) {
         Message message = new Message();
 
         Optional<Employee> employeeOptional = employeeRepository.findById(employee.getId());
