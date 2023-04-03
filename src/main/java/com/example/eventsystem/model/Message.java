@@ -22,20 +22,30 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(columnDefinition = "text")
     private String text;
+
     @ManyToOne
     private Bot bot;
+
     @ManyToOne
     private User user;
+
     @ManyToOne
     private Request request;
+
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
+
     private LocalDateTime sendTime;
+
     private LocalDateTime acceptTime;
+
     private boolean accept;
+
     private String email;
+
     @ManyToOne
     private Employee employee;
 }
