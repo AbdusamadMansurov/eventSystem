@@ -38,13 +38,13 @@ public class MessageController {
         return ResponseEntity.status(allByEmployee.getStatus()).body(allByEmployee);
     }
 
-    @GetMapping("/type")
+    @GetMapping("/messageType")
     public ResponseEntity<?> getAllByEmployeeAndType(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @AuthenticationPrincipal Employee employee) {
-        ApiResponse<CustomPage<MessageResponseDTO>> allByEmployee = messageService.getAllByEmployeeAndType(employee, page, size);
-        return ResponseEntity.status(allByEmployee.getStatus()).body(allByEmployee);
+        ApiResponse<CustomPage<MessageResponseDTO>> response = messageService.getAllByEmployeeAndType(employee, page,size);
+        return ResponseEntity.status(response.getStatus()).body(response);
 
     }
 }

@@ -1,6 +1,7 @@
 package com.example.eventsystem.model;
 
 import com.example.eventsystem.model.enums.MessageType;
+import com.example.eventsystem.model.enums.SendType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +38,9 @@ public class Message {
 
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
+
+    @Enumerated(EnumType.STRING)
+    private SendType sendType;
 
     private LocalDateTime sendTime;
 

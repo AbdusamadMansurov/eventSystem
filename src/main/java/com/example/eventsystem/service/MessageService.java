@@ -9,6 +9,7 @@ import com.example.eventsystem.model.Message;
 import com.example.eventsystem.model.Request;
 import com.example.eventsystem.model.User;
 import com.example.eventsystem.model.enums.MessageType;
+import com.example.eventsystem.model.enums.SendType;
 import com.example.eventsystem.repository.EmployeeRepository;
 import com.example.eventsystem.repository.MessageRepository;
 import com.example.eventsystem.repository.RequestRepository;
@@ -136,7 +137,7 @@ public class MessageService {
     public ApiResponse<CustomPage<MessageResponseDTO>> getAllByEmployeeAndType(Employee employee, int page, int size) {
         Page<Message> messagePage;
         ApiResponse<CustomPage<MessageResponseDTO>> response = new ApiResponse<>();
-            messagePage = messageRepository.findAllByEmployeeAndSendTimeAndMessageTypeExists(employee, null, PageRequest.of(page, size));
+            messagePage = messageRepository.findAllByEmployeeAndSendTimeNullAndMessageTypeNotNullAndSendType(employee, SendType.SMS, PageRequest.of(page, size));
 
         CustomPage<MessageResponseDTO> messages = new CustomPage<>();
 

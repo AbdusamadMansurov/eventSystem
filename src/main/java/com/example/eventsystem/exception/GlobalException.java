@@ -100,7 +100,6 @@ public class GlobalException {
                 .build());
     }
 
-
     @ExceptionHandler({PropertyReferenceException.class})
     public HttpEntity<?> fieldNameNotFound(PropertyReferenceException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.builder()
