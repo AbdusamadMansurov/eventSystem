@@ -8,6 +8,7 @@ import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.model.Message;
 import com.example.eventsystem.model.Request;
 import com.example.eventsystem.model.User;
+import com.example.eventsystem.model.enums.MessageType;
 import com.example.eventsystem.repository.EmployeeRepository;
 import com.example.eventsystem.repository.MessageRepository;
 import com.example.eventsystem.repository.RequestRepository;
@@ -68,10 +69,77 @@ public class MessageService {
 //        return response;
 //    }
 
-    public ApiResponse<CustomPage<MessageResponseDTO>> getAllByEmployee(Employee employee, int page, int size) {
-        Page<Message> messagePage = messageRepository.findAllByEmployeeAndSendTime(employee, null, PageRequest.of(page, size));
-        CustomPage<MessageResponseDTO> messages = new CustomPage<>();
+    public ApiResponse<CustomPage<MessageResponseDTO>> getAllByEmployee(Employee employee, int page, int size, String type) {
+        Page<Message> messagePage;
         ApiResponse<CustomPage<MessageResponseDTO>> response = new ApiResponse<>();
+        if (type != null && type.equals("")) {
+            MessageType messageType;
+            try {
+                messageType = MessageType.valueOf(type);
+            } catch (Exception e) {
+                response.setMessage("This message type is false!!!");
+                response.setStatus(400);
+                response.setSuccess(false);
+                return response;
+            }
+            messagePage = messageRepository.findAllByEmployeeAndSendTimeAndMessageType(employee, null, messageType, PageRequest.of(page, size));
+        } else {
+            messagePage = messageRepository.findAllByEmployeeAndSendTime(employee, null, PageRequest.of(page, size));
+        }
+        CustomPage<MessageResponseDTO> messages = new CustomPage<>();
+
+        List<MessageResponseDTO> messageResponseDTOList = new ArrayList<>();
+        int count = 0;
+        for (Message message : messagePage.getContent()) {
+            MessageResponseDTO messageResponseDTO = new MessageResponseDTO();
+            messageResponseDTO.setId(message.getId());
+            messageResponseDTO.setPhone(message.getUser().getPhone());
+            messageResponseDTO.setText(message.getText());
+            if (message.getText().length() > 145) {
+                while (message.getText().length() > 145) {
+                    MessageResponseDTO messageResponseDTO1 = new MessageResponseDTO();
+                    messageResponseDTO1.setId(message.getId());
+                    messageResponseDTO1.setText(message.getText().substring(0, 140));
+                    messageResponseDTO1.setPhone(message.getUser().getPhone());
+                    message.setText(message.getText().substring(140));
+                    messageResponseDTOList.add(messageResponseDTO1);
+                    count++;
+                }
+                if (message.getText().length() > 0) {
+                    MessageResponseDTO messageResponseDTO1 = new MessageResponseDTO();
+                    messageResponseDTO1.setId(message.getId());
+                    messageResponseDTO1.setText(message.getText().substring(0, message.getText().length()));
+                    messageResponseDTO1.setPhone(message.getUser().getPhone());
+                    messageResponseDTOList.add(messageResponseDTO1);
+                    count++;
+                }
+            } else {
+                messageResponseDTOList.add(messageResponseDTO);
+            }
+        }
+        messages.setContent(messageResponseDTOList);
+        messages.setEmpty(messagePage.isEmpty());
+        messages.setNumber(messagePage.getNumber());
+        messages.setNumberOfElements(messagePage.getNumberOfElements() + count);
+        messages.setTotalElements(messagePage.getTotalElements() + count);
+        messages.setTotalPages(messagePage.getTotalPages());
+        messages.setSize(messagePage.getSize());
+        messages.setLast(messagePage.isLast());
+        messages.setFirst(messagePage.isFirst());
+
+        response.setMessage("Here!!!");
+        response.setStatus(200);
+        response.setSuccess(true);
+        response.setData(messages);
+        return response;
+    }
+    public ApiResponse<CustomPage<MessageResponseDTO>> getAllByEmployeeAndType(Employee employee, int page, int size) {
+        Page<Message> messagePage;
+        ApiResponse<CustomPage<MessageResponseDTO>> response = new ApiResponse<>();
+            messagePage = messageRepository.findAllByEmployeeAndSendTimeAndMessageTypeExists(employee, null, PageRequest.of(page, size));
+
+        CustomPage<MessageResponseDTO> messages = new CustomPage<>();
+
         List<MessageResponseDTO> messageResponseDTOList = new ArrayList<>();
         int count = 0;
         for (Message message : messagePage.getContent()) {
