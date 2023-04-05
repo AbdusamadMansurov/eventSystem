@@ -268,7 +268,7 @@ public class CompanyService {
             return ApiResponse.builder().
                     success(false).
                     status(400).
-                    message("Company is not found").
+                    message("Company not found").
                     build();
         }
         Company company = companyOptional.get();
@@ -276,7 +276,7 @@ public class CompanyService {
             return ApiResponse.builder().
                     success(false).
                     status(400).
-                    message("Company is not found").
+                    message("Company not found").
                     build();
         }
         if (dto.getAttachment() != null && !dto.getAttachment().isEmpty()) {

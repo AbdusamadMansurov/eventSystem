@@ -55,7 +55,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> edit(@PathVariable Long id, @RequestBody CompanyDTO dto, @AuthenticationPrincipal Employee employee) {
+    public ResponseEntity<?> edit(@PathVariable Long id, @ModelAttribute CompanyDTO dto, @AuthenticationPrincipal Employee employee) {
         ApiResponse<?> response = companyService.edit(id, dto, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
