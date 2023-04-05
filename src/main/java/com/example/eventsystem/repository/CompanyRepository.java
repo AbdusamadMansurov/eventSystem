@@ -18,6 +18,7 @@ import java.util.Optional;
 public interface CompanyRepository extends JpaRepository<Company, Long> {
     Optional<Company> findByINN(String inn);
     List<Company> findAllByDirector(Employee director);
-    Page<Company> findAllByActive(Pageable pageable, Company company, boolean active);
+
+    Page<Company> findAllByActive(Pageable pageable, boolean active);
 
 }

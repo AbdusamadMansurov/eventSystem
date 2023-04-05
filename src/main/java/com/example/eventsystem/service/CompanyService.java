@@ -49,7 +49,7 @@ public class CompanyService {
                     success(false).
                     build();
 
-        Page<Company> companies = companyRepository.findAllByActive(pageable, employee.getCompany(), active);
+        Page<Company> companies = companyRepository.findAllByActive(pageable, active);
         if (companies.isEmpty()) {
             return ApiResponse.<Page<Company>>builder().
                     success(false).

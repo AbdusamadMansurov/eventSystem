@@ -27,8 +27,11 @@ public class CompanyController {
     private final CompanyService companyService;
 
     private final CompanyRepository companyRepository;
+
+
+
     @GetMapping
-    public ResponseEntity<?> getAllByCompany(@RequestParam(defaultValue = "0") int page, @AuthenticationPrincipal Employee employee, @RequestParam Boolean active) {
+    public ResponseEntity<?> getAllByCompany(@RequestParam(defaultValue = "0") int page, @AuthenticationPrincipal Employee employee, @RequestParam(defaultValue = "true") Boolean active) {
         ApiResponse<Page<Company>> response = companyService.getAll(page, employee, active);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
