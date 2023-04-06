@@ -22,7 +22,7 @@ public class CallDTO {
 
     private String description;
 
-    private List<Long> ReviewCategoryIds;
+    private List<Long> reviewCategoryIds;
 
     boolean success = false;
 
