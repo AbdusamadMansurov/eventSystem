@@ -2,11 +2,9 @@ package com.example.eventsystem.service;
 
 import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.CallDTO;
-import com.example.eventsystem.model.Call;
-import com.example.eventsystem.model.Employee;
-import com.example.eventsystem.model.ReviewCategory;
-import com.example.eventsystem.model.User;
+import com.example.eventsystem.model.*;
 import com.example.eventsystem.repository.CallRepository;
+import com.example.eventsystem.repository.RequestRepository;
 import com.example.eventsystem.repository.ReviewCategoryRepository;
 import com.example.eventsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +34,7 @@ public class CallService {
     private final CallRepository callRepository;
     private final UserRepository userRepository;
     private final ReviewCategoryRepository ReviewCategoryRepository;
+    private final RequestRepository requestRepository;
 
 
     public ApiResponse<Page<Call>> getAll(int page, Employee employee) {
@@ -111,25 +110,29 @@ public class CallService {
     }
 
     public ApiResponse<Call> add(CallDTO dto, Employee employee) {
-        if (employee == null) {
-            return ApiResponse.<Call>builder().
-                    message("User not found!!!").
-                    success(false).
-                    status(400).
-                    build();
-        }
 
         Optional<User> clientOptional = userRepository.findById(dto.getClientId());
 
-        if (clientOptional.isEmpty()) {
+        if (clientOptional.isEmpty() || !clientOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.<Call>builder().
                     message("Client not found!!!").
                     status(400).
                     success(false).
                     build();
         }
-
+        Call call = new Call();
         User client = clientOptional.get();
+        if (dto.getRequestId() != null) {
+            Optional<Request> requestOptional = requestRepository.findById(dto.getRequestId());
+            if (requestOptional.isEmpty() || !requestOptional.get().getUser().getId().equals(client.getId())) {
+                return ApiResponse.<Call>builder().
+                        message("Request not found!!!").
+                        status(400).
+                        success(false).
+                        build();
+            }
+            call.setRequest(requestOptional.get());
+        }
 
         List<ReviewCategory> reviewCategoryList = new ArrayList<>();
 
@@ -152,11 +155,8 @@ public class CallService {
                         success(false).
                         build();
             }
-
             reviewCategoryList.add(reviewCategory);
         }
-
-        Call call = new Call();
 
         call.setClient(client);
         call.setReviewCategory(reviewCategoryList);
@@ -167,7 +167,7 @@ public class CallService {
         Call save = callRepository.save(call);
 
         return ApiResponse.<Call>builder().
-                message("Called!!!").
+                message("Call saved!!!").
                 status(201).
                 success(true).
                 data(save).

@@ -16,7 +16,7 @@ import java.util.List;
 @ToString
 public class CallDTO {
 
-    private Long clientId;
+    private Long clientId, requestId;
 
     private LocalDate nextConnectionDate;
 
