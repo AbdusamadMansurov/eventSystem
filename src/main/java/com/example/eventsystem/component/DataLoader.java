@@ -65,26 +65,6 @@ public class DataLoader implements CommandLineRunner {
             bankInfos.add(bankInfo1);
             bankInfoRepository.saveAll(bankInfos);
         }
-//        if (runMode.equals("never")) {
-//            List<Company> companies = companyRepository.findAll();
-//            for (Company company : companies) {
-//                Employee director = company.getDirector();
-//                if (director != null && company.getAddress() != null) {
-//                    director.setAddress(company.getAddress());
-//                    Optional<User> userOptional = userRepository.findByPhone(director.getPhoneFirst());
-//                    if (userOptional.isEmpty())
-//                        continue;
-//                    User user = userOptional.get();
-//                    user.setAddress(company.getAddress());
-//                    employeeRepository.save(director);
-//                    userRepository.save(user);
-
-//            Optional<Employee> employeeOptional = employeeRepository.findById(3415L);
-//            Employee employee = employeeOptional.get();
-//            employee.setPassword(passwordEncoder.encode("123123"));
-//            employee.setPhoneFirst("+998977515747");
-//            employeeRepository.save(employee);
-//        }
         }
     }
 
