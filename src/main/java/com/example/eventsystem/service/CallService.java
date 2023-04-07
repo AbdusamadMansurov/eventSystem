@@ -163,7 +163,9 @@ public class CallService {
         call.setEmployee(employee);
         call.setDescription(dto.getDescription());
         call.setSuccess(dto.isSuccess());
-        call.setNextConnectionDate(dto.getNextConnectionDate());
+        if (dto.getNextConnectionDate() != null) {
+            call.setNextConnectionDate(dto.getNextConnectionDate());
+        }
         Call save = callRepository.save(call);
 
         return ApiResponse.<Call>builder().
@@ -238,7 +240,9 @@ public class CallService {
         call.setEmployee(employee);
         call.setDescription(dto.getDescription());
         call.setSuccess(dto.isSuccess());
-        call.setNextConnectionDate(dto.getNextConnectionDate());
+        if (dto.getNextConnectionDate() != null) {
+            call.setNextConnectionDate(dto.getNextConnectionDate());
+        }
         Call save = callRepository.save(call);
 
         return ApiResponse.<Call>builder().

@@ -217,6 +217,7 @@ public class CompanyService {
             }
             employee.setCompany(saveCompany);
             employee.setFullName(dto.getFullName());
+            employee.setUsername(dto.getUsername());
             employee.setPhoneFirst(dto.getPhoneFirst());
             employee.setPhoneSecond(dto.getPhoneSecond());
             employee.setPassword(passwordEncoder.encode(dto.getPassword()));

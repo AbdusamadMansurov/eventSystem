@@ -38,7 +38,7 @@ public class Call {
     @ManyToOne
     private Request request;
 
-    @OneToMany
+    @ManyToMany
     @ToString.Exclude
     private List<ReviewCategory> ReviewCategory;
 
