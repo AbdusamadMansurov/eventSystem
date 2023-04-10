@@ -96,12 +96,14 @@ public class MessageService {
             messageResponseDTO.setId(message.getId());
             messageResponseDTO.setPhone(message.getUser().getPhone());
             messageResponseDTO.setText(message.getText());
+            messageResponseDTO.setMessageType(message.getMessageType());
             if (message.getText().length() > 145) {
                 while (message.getText().length() > 145) {
                     MessageResponseDTO messageResponseDTO1 = new MessageResponseDTO();
                     messageResponseDTO1.setId(message.getId());
                     messageResponseDTO1.setText(message.getText().substring(0, 140));
                     messageResponseDTO1.setPhone(message.getUser().getPhone());
+                    messageResponseDTO1.setMessageType(message.getMessageType());
                     message.setText(message.getText().substring(140));
                     messageResponseDTOList.add(messageResponseDTO1);
                     count++;
@@ -148,12 +150,14 @@ public class MessageService {
             messageResponseDTO.setId(message.getId());
             messageResponseDTO.setPhone(message.getUser().getPhone());
             messageResponseDTO.setText(message.getText());
+            messageResponseDTO.setMessageType(message.getMessageType());
             if (message.getText().length() > 145) {
                 while (message.getText().length() > 145) {
                     MessageResponseDTO messageResponseDTO1 = new MessageResponseDTO();
                     messageResponseDTO1.setId(message.getId());
                     messageResponseDTO1.setText(message.getText().substring(0, 140));
                     messageResponseDTO1.setPhone(message.getUser().getPhone());
+                    messageResponseDTO1.setMessageType(message.getMessageType());
                     message.setText(message.getText().substring(140));
                     messageResponseDTOList.add(messageResponseDTO1);
                     count++;
@@ -163,6 +167,7 @@ public class MessageService {
                     messageResponseDTO1.setId(message.getId());
                     messageResponseDTO1.setText(message.getText().substring(0, message.getText().length()));
                     messageResponseDTO1.setPhone(message.getUser().getPhone());
+                    messageResponseDTO1.setMessageType(message.getMessageType());
                     messageResponseDTOList.add(messageResponseDTO1);
                     count++;
                 }

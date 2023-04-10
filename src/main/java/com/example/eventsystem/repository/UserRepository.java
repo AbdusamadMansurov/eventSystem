@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificationExecutor<User> {
     Optional<User> findByUsername(String username);
+    List<User> findAllByDepartment_Id(Long departmentId);
     Optional<User> findByQrcode( UUID qrcode);
     Optional<User> findByPhone(String phone);
     Optional<User> findByPhoneAndDepartment_Id(String phone, Long departmentId);

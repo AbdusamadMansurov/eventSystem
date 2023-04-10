@@ -1,13 +1,8 @@
 package com.example.eventsystem.component;
 
-import com.example.eventsystem.model.BankInfo;
-import com.example.eventsystem.model.Company;
-import com.example.eventsystem.model.Employee;
+import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.RoleType;
-import com.example.eventsystem.repository.BankInfoRepository;
-import com.example.eventsystem.repository.CompanyRepository;
-import com.example.eventsystem.repository.EmployeeRepository;
-import com.example.eventsystem.repository.UserRepository;
+import com.example.eventsystem.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;

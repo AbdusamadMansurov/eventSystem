@@ -15,4 +15,5 @@ public class MessageResponseDTO {
     private  Long id;
     private String text;
     private String phone;
+    private MessageType messageType;
 }
