@@ -1,9 +1,27 @@
 package com.example.eventsystem.service;
 
-import com.example.eventsystem.dto.*;
-import com.example.eventsystem.model.*;
+import com.example.eventsystem.dto.AddressDTO;
+import com.example.eventsystem.dto.ApiResponse;
+import com.example.eventsystem.dto.BankInfoDTO;
+import com.example.eventsystem.dto.CompanyDTO;
+import com.example.eventsystem.dto.EmployeeDTO;
+import com.example.eventsystem.model.Address;
+import com.example.eventsystem.model.Attachment;
+import com.example.eventsystem.model.BankInfo;
+import com.example.eventsystem.model.Company;
+import com.example.eventsystem.model.Country;
+import com.example.eventsystem.model.District;
+import com.example.eventsystem.model.Employee;
+import com.example.eventsystem.model.Region;
+import com.example.eventsystem.model.User;
 import com.example.eventsystem.model.enums.RoleType;
-import com.example.eventsystem.repository.*;
+import com.example.eventsystem.repository.AttachmentRepository;
+import com.example.eventsystem.repository.BankInfoRepository;
+import com.example.eventsystem.repository.CompanyRepository;
+import com.example.eventsystem.repository.CountryRepository;
+import com.example.eventsystem.repository.DistrictRepository;
+import com.example.eventsystem.repository.EmployeeRepository;
+import com.example.eventsystem.repository.RegionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +34,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Malikov Azizjon    ourSystem    26.12.2022    15:55
@@ -39,17 +61,15 @@ public class CompanyService {
     private final CountryRepository countryRepository;
     private final RegionRepository regionRepository;
 
-    public ApiResponse<Page<Company>> getAll(int page, Employee employee, Boolean active) {
+    public ApiResponse<Page<Company>> getAll(int page, Boolean active, String name) {
 
         Pageable pageable = PageRequest.of(page, size);
-        if (employee == null)
-            return ApiResponse.<Page<Company>>builder().
-                    message("Company not found!!!").
-                    status(400).
-                    success(false).
-                    build();
-
-        Page<Company> companies = companyRepository.findAllByActive(pageable, active);
+        Page<Company> companies;
+        if (name == null || name.equals("")) {
+            companies = companyRepository.findAllByActive(pageable, active);
+        }else {
+            companies = companyRepository.findAllByActiveAndNameLikeIgnoreCase(active, name, pageable);
+        }
         if (companies.isEmpty()) {
             return ApiResponse.<Page<Company>>builder().
                     success(false).
@@ -242,7 +262,7 @@ public class CompanyService {
             }
             company.setDirector(employeeOptional.get());
         }
-        if (companyDTO.getBankInfoDTO() != null && !companyDTO.getBankInfoDTO().isEmpty()){
+        if (companyDTO.getBankInfoDTO() != null && !companyDTO.getBankInfoDTO().isEmpty()) {
             List<BankInfoDTO> bankInfoDTO = companyDTO.getBankInfoDTO();
             for (BankInfoDTO infoDTO : bankInfoDTO) {
                 BankInfo bankInfo = new BankInfo();
@@ -344,10 +364,10 @@ public class CompanyService {
             address.setStreetHome(address.getStreetHome());
             company.setAddress(address);
         }
-        if (company.getBankInfo()!=null){
+        if (company.getBankInfo() != null) {
             bankInfoRepository.deleteAll(company.getBankInfo());
         }
-        if (dto.getBankInfoDTO() != null && !dto.getBankInfoDTO().isEmpty()){
+        if (dto.getBankInfoDTO() != null && !dto.getBankInfoDTO().isEmpty()) {
             List<BankInfoDTO> bankInfoDTO = dto.getBankInfoDTO();
             for (BankInfoDTO infoDTO : bankInfoDTO) {
                 BankInfo bankInfo = new BankInfo();
@@ -427,7 +447,7 @@ public class CompanyService {
     @SneakyThrows
     public ApiResponse<?> editPhoto(Long id, MultipartFile photo) {
         Optional<Attachment> attachmentOptional = attachmentRepository.findById(id);
-        if (attachmentOptional.isEmpty()){
+        if (attachmentOptional.isEmpty()) {
             return ApiResponse.builder().
                     message("Photo not found!!!").
                     status(400).

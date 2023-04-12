@@ -20,5 +20,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     List<Company> findAllByDirector(Employee director);
 
     Page<Company> findAllByActive(Pageable pageable, boolean active);
+    Page<Company> findAllByActiveAndNameLikeIgnoreCase(boolean active, String name, Pageable pageable);
 
 }

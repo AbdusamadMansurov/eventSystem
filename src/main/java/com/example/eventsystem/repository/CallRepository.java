@@ -4,6 +4,7 @@ import com.example.eventsystem.model.Call;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -25,4 +26,6 @@ public interface CallRepository extends JpaRepository<Call, Long> {
     Page<Call> findAllByEmployee_IdAndClient_Department_Company_IdAndCreatedTimeBetween(Long employee_id, Long companyId,LocalDateTime createdTime, LocalDateTime createdTime2, Pageable pageable);
 
     Page<Call> findAllByClient_Id(Long clientId, Pageable pageable);
+    @Query(value = "select count(*) from call where client_id = ?1", nativeQuery = true)
+    int countByClient(Long clientId);
 }
