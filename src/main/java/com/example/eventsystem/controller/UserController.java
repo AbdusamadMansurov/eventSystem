@@ -10,7 +10,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,11 +42,10 @@ public class UserController {
     }
 
     @GetMapping("/getByQ")
-    public ResponseEntity<?> getByPhoneOrName(@RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(required = false) String name,
+    public ResponseEntity<?> getByPhoneOrName(@RequestParam(required = false) String name,
                                               @RequestParam(required = false) String phone,
                                               @AuthenticationPrincipal Employee employee) {
-        ApiResponse<List<User>> response = userService.getByPhoneOrName(page, name, phone, employee);
+        ApiResponse<List<User>> response = userService.getByPhoneOrName(name, phone, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
@@ -81,6 +88,12 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
         ApiResponse<?> response = userService.delete(id, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> getCallCountByUser(@RequestParam Long userId, @AuthenticationPrincipal Employee employee){
+        ApiResponse<?> response = userService.getCallCountByUser(userId, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

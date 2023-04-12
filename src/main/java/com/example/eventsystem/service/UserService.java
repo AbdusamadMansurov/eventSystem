@@ -3,10 +3,25 @@ package com.example.eventsystem.service;
 import com.example.eventsystem.dto.AddressDTO;
 import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.UserDTO;
-import com.example.eventsystem.model.*;
+import com.example.eventsystem.model.Address;
+import com.example.eventsystem.model.Country;
+import com.example.eventsystem.model.Department;
+import com.example.eventsystem.model.District;
+import com.example.eventsystem.model.Employee;
+import com.example.eventsystem.model.Region;
+import com.example.eventsystem.model.User;
 import com.example.eventsystem.model.enums.Gender;
-import com.example.eventsystem.repository.*;
-import com.example.eventsystem.specification.*;
+import com.example.eventsystem.repository.CallRepository;
+import com.example.eventsystem.repository.CountryRepository;
+import com.example.eventsystem.repository.DepartmentRepository;
+import com.example.eventsystem.repository.DistrictRepository;
+import com.example.eventsystem.repository.RegionRepository;
+import com.example.eventsystem.repository.UserRepository;
+import com.example.eventsystem.specification.EntitySpecification;
+import com.example.eventsystem.specification.FieldType;
+import com.example.eventsystem.specification.FilterRequest;
+import com.example.eventsystem.specification.Operator;
+import com.example.eventsystem.specification.SearchRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -31,6 +46,7 @@ public class UserService {
     private final DepartmentRepository departmentRepository;
     private final CountryRepository countryRepository;
     private final RequestService requestService;
+    private final CallRepository callRepository;
 
     public ApiResponse<Page<User>> getAll(boolean desc, String sortBy, int page, Employee employee, Boolean active) {
 
@@ -44,13 +60,6 @@ public class UserService {
         } else {
             users = userRepository.findAllByDepartment_Company_Id(employee.getCompany().getId(), pageable);
         }
-//        if (users.isEmpty()) {
-//            return ApiResponse.<Page<User>>builder().
-//                    success(false).
-//                    status(400).
-//                    message("Users not found").
-//                    build();
-//        }
         return ApiResponse.<Page<User>>builder().
                 success(true).
                 status(200).
@@ -60,23 +69,18 @@ public class UserService {
     }
 
     public ApiResponse<User> getOne(Long id, Employee employee) {
-        if (employee == null)
-            return ApiResponse.<User>builder().
-                    message("Employee not found!!!").
-                    status(400).
-                    success(false).
-                    build();
 
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if (user.getDepartment().getCompany().getId().equals(employee.getCompany().getId()))
+            if (user.getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
                 return ApiResponse.<User>builder().
                         success(true).
                         status(200).
                         message("User here").
-                        data(userOptional.get()).
+                        data(user).
                         build();
+            }
         }
         return ApiResponse.<User>builder().
                 success(false).
@@ -318,7 +322,7 @@ public class UserService {
     }
 
 
-    public ApiResponse<List<User>> getByPhoneOrName(int page, String name, String phone, Employee employee) {
+    public ApiResponse<List<User>> getByPhoneOrName(String name, String phone, Employee employee) {
         SearchRequest searchRequest = new SearchRequest();
         List<FilterRequest> filterRequests = new ArrayList<>();
         filterRequests.add(FilterRequest.builder().
@@ -350,6 +354,23 @@ public class UserService {
                 status(200).
                 success(true).
                 data(userList).
+                build();
+    }
+
+    public ApiResponse<?> getCallCountByUser(Long userId, Employee employee) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty() || !userOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.builder().
+                    message("User is not found !").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        return ApiResponse.builder().
+                message("Here!!!").
+                status(200).
+                success(true).
+                data(callRepository.countByClient(userId)).
                 build();
     }
 }

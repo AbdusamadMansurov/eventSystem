@@ -87,7 +87,6 @@ public class MessageService {
         } else {
             messagePage = messageRepository.findAllByEmployeeAndSendTime(employee, null, PageRequest.of(page, size));
         }
-        CustomPage<MessageResponseDTO> messages = new CustomPage<>();
 
         List<MessageResponseDTO> messageResponseDTOList = new ArrayList<>();
         int count = 0;
@@ -120,15 +119,7 @@ public class MessageService {
                 messageResponseDTOList.add(messageResponseDTO);
             }
         }
-        messages.setContent(messageResponseDTOList);
-        messages.setEmpty(messagePage.isEmpty());
-        messages.setNumber(messagePage.getNumber());
-        messages.setNumberOfElements(messagePage.getNumberOfElements() + count);
-        messages.setTotalElements(messagePage.getTotalElements() + count);
-        messages.setTotalPages(messagePage.getTotalPages());
-        messages.setSize(messagePage.getSize());
-        messages.setLast(messagePage.isLast());
-        messages.setFirst(messagePage.isFirst());
+        CustomPage<MessageResponseDTO> messages = new CustomPage<>(messagePage, messageResponseDTOList);
 
         response.setMessage("Here!!!");
         response.setStatus(200);
@@ -141,7 +132,7 @@ public class MessageService {
         ApiResponse<CustomPage<MessageResponseDTO>> response = new ApiResponse<>();
             messagePage = messageRepository.findAllByEmployeeAndSendTimeNullAndMessageTypeNotNullAndSendType(employee, SendType.SMS, PageRequest.of(page, size));
 
-        CustomPage<MessageResponseDTO> messages = new CustomPage<>();
+
 
         List<MessageResponseDTO> messageResponseDTOList = new ArrayList<>();
         int count = 0;
@@ -175,15 +166,7 @@ public class MessageService {
                 messageResponseDTOList.add(messageResponseDTO);
             }
         }
-        messages.setContent(messageResponseDTOList);
-        messages.setEmpty(messagePage.isEmpty());
-        messages.setNumber(messagePage.getNumber());
-        messages.setNumberOfElements(messagePage.getNumberOfElements() + count);
-        messages.setTotalElements(messagePage.getTotalElements() + count);
-        messages.setTotalPages(messagePage.getTotalPages());
-        messages.setSize(messagePage.getSize());
-        messages.setLast(messagePage.isLast());
-        messages.setFirst(messagePage.isFirst());
+        CustomPage<MessageResponseDTO> messages = new CustomPage<>(messagePage, messageResponseDTOList);
 
         response.setMessage("Here!!!");
         response.setStatus(200);
