@@ -2,8 +2,19 @@ package com.example.eventsystem.model;
 
 import com.example.eventsystem.model.enums.OrderType;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,26 +33,39 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     private User client;
+
     @ManyToOne
     private Employee employee;
+
     @ManyToOne
     private Employee receiver;
+
     @ManyToOne
     private Product product;
+
     private Double price;
+
     private String description;
+
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime recordedTime = LocalDateTime.now();
+
     @OneToMany(mappedBy = "order")
     @ToString.Exclude
     private List<Payment> payments;
+
     private LocalDate startDate;
+
     @Enumerated(EnumType.STRING)
     private OrderType orderType;
+
     private LocalDate endTime;
+
     private boolean ready = false;
+
     private boolean active = true;
 
 }
