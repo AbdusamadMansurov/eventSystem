@@ -159,7 +159,7 @@ public class CallService {
         }
 
         call.setClient(client);
-        call.setReviewCategory(reviewCategoryList);
+        call.setReviewCategories(reviewCategoryList);
         call.setEmployee(employee);
         call.setDescription(dto.getDescription());
         call.setSuccess(dto.isSuccess());
@@ -212,7 +212,7 @@ public class CallService {
 
 
         User client = clientOptional.get();
-        List<ReviewCategory> ReviewCategoryList = call.getReviewCategory();
+        List<ReviewCategory> reviewCategoryList = call.getReviewCategories();
         for (Long ReviewCategoryId : dto.getReviewCategoryIds()) {
             Optional<ReviewCategory> ReviewCategoryOptional = ReviewCategoryRepository.findById(ReviewCategoryId);
             if (ReviewCategoryOptional.isEmpty()) {
@@ -233,10 +233,10 @@ public class CallService {
                         build();
             }
 
-            ReviewCategoryList.add(ReviewCategory);
+            reviewCategoryList.add(ReviewCategory);
         }
         call.setClient(client);
-        call.setReviewCategory(ReviewCategoryList);
+        call.setReviewCategories(reviewCategoryList);
         call.setEmployee(employee);
         call.setDescription(dto.getDescription());
         call.setSuccess(dto.isSuccess());

@@ -40,7 +40,7 @@ public class Call {
 
     @ManyToMany
     @ToString.Exclude
-    private List<ReviewCategory> ReviewCategory;
+    private List<ReviewCategory> reviewCategories;
 
     private boolean success;
     //    @ManyToOne(fetch = FetchType.LAZY)

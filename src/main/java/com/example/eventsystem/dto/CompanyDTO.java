@@ -1,6 +1,6 @@
 package com.example.eventsystem.dto;
 
-import com.example.eventsystem.model.enums.ActiveTypes;
+import com.example.eventsystem.model.enums.ActiveType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,7 @@ public class CompanyDTO {
 
     private Long memberOrganizationId;
     private String name, stirNumber;
-    private ActiveTypes activeType;
+    private ActiveType activeType;
     private List<BankInfoDTO> bankInfoDTO;
     private MultipartFile attachment;
     private EmployeeDTO director;

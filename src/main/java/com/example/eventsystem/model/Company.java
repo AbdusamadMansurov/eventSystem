@@ -1,6 +1,6 @@
 package com.example.eventsystem.model;
 
-import com.example.eventsystem.model.enums.ActiveTypes;
+import com.example.eventsystem.model.enums.ActiveType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -22,7 +22,7 @@ public class Company {
     private Long id;
     private String name;
     @Enumerated(EnumType.STRING)
-    private ActiveTypes activityType;
+    private ActiveType activityType;
     private String stirNumber;
     @ManyToOne
     private Company memberOrganization;
@@ -77,7 +77,7 @@ public class Company {
     }
 
 
-    public Company(String name, ActiveTypes activityType, String stirNumber, Address address, Company memberOrganization, BankInfo bankInfo, Employee director) {
+    public Company(String name, ActiveType activityType, String stirNumber, Address address, Company memberOrganization, BankInfo bankInfo, Employee director) {
         this.name = name;
         this.activityType = activityType;
         this.stirNumber = stirNumber;
