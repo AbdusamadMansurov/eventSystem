@@ -1,5 +1,6 @@
 package com.example.eventsystem.model;
 
+import com.example.eventsystem.model.enums.ActiveType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,9 @@ public class ReviewCategory {
 
     @Column(unique = true)
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    private ActiveType activeType;
 
     private boolean active = true;
 

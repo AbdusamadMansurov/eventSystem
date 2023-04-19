@@ -97,5 +97,23 @@ public class UserController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
+    @GetMapping("/getUserCountByEmployee")
+    public ResponseEntity<?> getUserCountByEmployee(@RequestParam(required = false) Long employeeId, @AuthenticationPrincipal Employee employee){
+        ApiResponse<?> response = userService.getUserCountByEmployee(employeeId, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+    @PutMapping("/removeUserEmployee")
+    public ResponseEntity<?> removeUserEmployee(@RequestParam Long employeeId, @AuthenticationPrincipal Employee employee, @RequestParam Long number){
+        ApiResponse<?> response = userService.removeUserEmployee(employeeId, employee, number);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+    @PutMapping("/addUserEmployee")
+    public ResponseEntity<?> addUserEmployee(@RequestParam Long employeeId, @AuthenticationPrincipal Employee employee, @RequestParam Long number){
+        ApiResponse<?> response = userService.addUserEmployee(employeeId, employee, number);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
+
 }
 

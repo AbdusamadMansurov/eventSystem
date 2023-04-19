@@ -20,6 +20,8 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificationExecutor<User> {
     Optional<User> findByUsername(String username);
     List<User> findAllByDepartment_Id(Long departmentId);
+    List<User> findAllByEmployee_Id(Long id);
+    List<User> findAllByDepartment_Company_IdAndEmployee_Id(Long companyId, Long employeeId);
     Optional<User> findByQrcode( UUID qrcode);
     Optional<User> findByPhone(String phone);
     Optional<User> findByPhoneAndDepartment_Id(String phone, Long departmentId);

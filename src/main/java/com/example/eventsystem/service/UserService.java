@@ -3,25 +3,10 @@ package com.example.eventsystem.service;
 import com.example.eventsystem.dto.AddressDTO;
 import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.dto.UserDTO;
-import com.example.eventsystem.model.Address;
-import com.example.eventsystem.model.Country;
-import com.example.eventsystem.model.Department;
-import com.example.eventsystem.model.District;
-import com.example.eventsystem.model.Employee;
-import com.example.eventsystem.model.Region;
-import com.example.eventsystem.model.User;
+import com.example.eventsystem.model.*;
 import com.example.eventsystem.model.enums.Gender;
-import com.example.eventsystem.repository.CallRepository;
-import com.example.eventsystem.repository.CountryRepository;
-import com.example.eventsystem.repository.DepartmentRepository;
-import com.example.eventsystem.repository.DistrictRepository;
-import com.example.eventsystem.repository.RegionRepository;
-import com.example.eventsystem.repository.UserRepository;
-import com.example.eventsystem.specification.EntitySpecification;
-import com.example.eventsystem.specification.FieldType;
-import com.example.eventsystem.specification.FilterRequest;
-import com.example.eventsystem.specification.Operator;
-import com.example.eventsystem.specification.SearchRequest;
+import com.example.eventsystem.repository.*;
+import com.example.eventsystem.specification.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -30,9 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +30,8 @@ public class UserService {
     private final CountryRepository countryRepository;
     private final RequestService requestService;
     private final CallRepository callRepository;
+    private final RequestRepository requestRepository;
+    private final EmployeeRepository employeeRepository;
 
     public ApiResponse<Page<User>> getAll(boolean desc, String sortBy, int page, Employee employee, Boolean active) {
 
@@ -361,16 +346,95 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty() || !userOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
             return ApiResponse.builder().
-                    message("User is not found !").
+                    message("User not found !").
                     success(false).
                     status(400).
                     build();
         }
+        int callCount = callRepository.countByClient(userId);
+        int requestCount = requestRepository.countByUser(userId);
+        Map<String, Integer> map = new HashMap<>();
+        map.put("call", callCount);
+        map.put("request", requestCount);
         return ApiResponse.builder().
                 message("Here!!!").
                 status(200).
                 success(true).
-                data(callRepository.countByClient(userId)).
+                data(map).
+                build();
+    }
+
+    public ApiResponse<?> getUserCountByEmployee(Long employeeId, Employee employee) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+        if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.builder().
+                    message("Employee not found !").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        List<User> userList = userRepository.findAllByDepartment_Company_IdAndEmployee_Id(employee.getCompany().getId(), employeeId);
+        int count = 0;
+        for (User user : userList) {
+            if (callRepository.countByClient(user.getId()) == 0) {
+                count++;
+            }
+        }
+
+        return ApiResponse.builder().
+                message("Here").
+                success(true).
+                status(200).
+                data(count).
+                build();
+    }
+
+    public ApiResponse<?> removeUserEmployee(Long employeeId, Employee employee, Long number) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+        if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.builder().
+                    message("Employee not found !").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        List<User> userList = userRepository.findAllByDepartment_Company_IdAndEmployee_Id(employee.getCompany().getId(), employeeId);
+        for (User user : userList) {
+            if (callRepository.countByClient(user.getId()) == 0 && number > 0) {
+                user.setEmployee(null);
+                userRepository.save(user);
+                number--;
+            }
+        }
+        return ApiResponse.builder().
+                message("Removed").
+                success(true).
+                status(200).
+                build();
+    }
+
+    public ApiResponse<?> addUserEmployee(Long employeeId, Employee employee, Long number) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+        if (employeeOptional.isEmpty() || !employeeOptional.get().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.builder().
+                    message("Employee not found !").
+                    success(false).
+                    status(400).
+                    build();
+        }
+        Employee operator = employeeOptional.get();
+        List<User> userList = userRepository.findAllByDepartment_Company_IdAndEmployee_Id(employee.getCompany().getId(), null);
+        for (User user : userList) {
+            if (callRepository.countByClient(user.getId()) == 0 && number > 0) {
+                user.setEmployee(operator);
+                userRepository.save(user);
+                number--;
+            }
+        }
+        return ApiResponse.builder().
+                message("Added").
+                success(true).
+                status(200).
                 build();
     }
 }
