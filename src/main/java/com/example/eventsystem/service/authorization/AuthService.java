@@ -30,7 +30,7 @@ public class AuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Employee> employeeOptional = employeeRepository.findByUsername(username);
+        Optional<Employee> employeeOptional = employeeRepository.findByUsername(username.trim());
 
         return employeeOptional.orElse(null);
     }

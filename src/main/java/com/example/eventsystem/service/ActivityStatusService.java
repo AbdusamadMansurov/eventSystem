@@ -3,7 +3,7 @@ package com.example.eventsystem.service;
 import com.example.eventsystem.dto.ApiResponse;
 import com.example.eventsystem.model.ActivityStatus;
 import com.example.eventsystem.model.User;
-import com.example.eventsystem.model.enums.ActiveTypes;
+import com.example.eventsystem.model.enums.ActiveType;
 import com.example.eventsystem.repository.ActivityStatusRepository;
 import com.example.eventsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +83,7 @@ public class ActivityStatusService {
             activityStatus.setFirstCase(lastActivity.getSecondCase());
         }
 
-        activityStatus.setSecondCase(ActiveTypes.valueOf(activeType));
+        activityStatus.setSecondCase(ActiveType.valueOf(activeType));
 
         activityStatus.setClient(clientOptional.get());
 
@@ -116,7 +116,7 @@ public class ActivityStatusService {
                     build();
         }
         ActivityStatus activityStatus = statusOptional.get();
-        activityStatus.setSecondCase(ActiveTypes.valueOf(activeType));
+        activityStatus.setSecondCase(ActiveType.valueOf(activeType));
         activityStatus.setClient(clientOptional.get());
         ActivityStatus save = activityStatusRepository.save(activityStatus);
 
