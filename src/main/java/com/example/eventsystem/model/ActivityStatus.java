@@ -1,6 +1,6 @@
 package com.example.eventsystem.model;
 
-import com.example.eventsystem.model.enums.ActiveTypes;
+import com.example.eventsystem.model.enums.ActiveType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
@@ -30,8 +30,8 @@ public class ActivityStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private ActiveTypes firstCase;
-    private ActiveTypes secondCase;
+    private ActiveType firstCase;
+    private ActiveType secondCase;
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime period = LocalDateTime.now();
     @JsonIgnore
