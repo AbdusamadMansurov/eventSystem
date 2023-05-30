@@ -189,14 +189,15 @@ public class EmployeeService {
         if (dto.getPassword() != null && !dto.getPassword().equals("")) {
             employee1.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
-        Optional<Employee> byUsername = employeeRepository.findByUsernameAndCompany_Id(dto.getUsername(), employee.getCompany().getId());
+        Optional<Employee> byUsername = employeeRepository.findByUsername(dto.getUsername());
         if (byUsername.isPresent() && !byUsername.get().getId().equals(employee1.getId())) {
             return ApiResponse.<Employee>builder().
-                    message("This phone number is used another employee. Please enter another phone number").
+                    message("This username is used another employee. Please enter another username").
                     success(false).
                     status(400).
                     build();
         }
+        employee1.setUsername(dto.getUsername());
         Set<RoleType> roles = new HashSet<>();
 
         for (String roleString : dto.getRoleList()) {

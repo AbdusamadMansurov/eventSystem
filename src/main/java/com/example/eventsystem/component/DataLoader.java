@@ -37,6 +37,7 @@ public class DataLoader implements CommandLineRunner {
 //            employee.setSelectedRole(RoleType.DIRECTOR);
             Set<RoleType> roles = new LinkedHashSet<>();
             roles.add(RoleType.DIRECTOR);
+//            roles.add(RoleType.SUPER_ADMIN);
             employee.setRoles(roles);
             Employee employeeSave = employeeRepository.save(employee);
             Company company = companyRepository.findById(1L).get();
