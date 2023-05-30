@@ -27,9 +27,6 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) {
         System.err.print(runMode);
         if (runMode.equals("always")) {
-//            Country country = countryRepository.save(new Country("Uzbekistan", "UZB"));
-//            Region region = regionRepository.save(new Region("Tashkent", "Poytaxt", country));
-//            District district = districtRepository.save(new District("Yakkasaroy", region));
             Employee employee = new Employee();
             employee.setUsername("Abdusamad");
             employee.setPassword(passwordEncoder.encode("123123"));
@@ -37,12 +34,11 @@ public class DataLoader implements CommandLineRunner {
 //            employee.setSelectedRole(RoleType.DIRECTOR);
             Set<RoleType> roles = new LinkedHashSet<>();
             roles.add(RoleType.DIRECTOR);
-//            roles.add(RoleType.SUPER_ADMIN);
+            roles.add(RoleType.SUPER_ADMIN);
             employee.setRoles(roles);
             Employee employeeSave = employeeRepository.save(employee);
             Company company = companyRepository.findById(1L).get();
             company.setDirector(employeeSave);
-//            company.setAddress(new Address(district, "22A"));
             Company save = companyRepository.save(company);
             List<BankInfo> bankInfos = new ArrayList<>();
             BankInfo bankInfo = new BankInfo();
