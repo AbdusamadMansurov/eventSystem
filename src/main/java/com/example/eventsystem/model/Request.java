@@ -30,7 +30,7 @@ public class Request {
     private Product product;
     @Enumerated(EnumType.STRING)
     private RequestType requestStatusType;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private User user;
     @Enumerated(EnumType.STRING)
     private RegisteredType registeredType;
