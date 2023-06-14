@@ -37,7 +37,7 @@ public class HibernateEventListener implements PostUpdateEventListener {
                 changeService.changeSaver(id, employee, entityName, columnName, oldData, newData);
             }
         } catch (Exception ignored) {
-            System.err.println(ignored);
+            System.err.println(ignored.getMessage());
         }
     }
 

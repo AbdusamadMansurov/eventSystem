@@ -30,7 +30,7 @@ public class Message {
     @ManyToOne
     private Bot bot;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private User user;
 
     @ManyToOne
