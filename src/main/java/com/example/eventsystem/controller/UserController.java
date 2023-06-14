@@ -6,6 +6,7 @@ import com.example.eventsystem.model.Employee;
 import com.example.eventsystem.model.User;
 import com.example.eventsystem.repository.UserRepository;
 import com.example.eventsystem.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -62,13 +63,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestBody UserDTO dto, @AuthenticationPrincipal Employee employee) {
+    public ResponseEntity<?> add(@RequestBody @Valid UserDTO dto, @AuthenticationPrincipal Employee employee) {
         ApiResponse<?> response = userService.add(dto, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> edit(@PathVariable Long id, @RequestBody UserDTO dto, @AuthenticationPrincipal Employee employee) {
+    public ResponseEntity<?> edit(@PathVariable Long id,@Valid @RequestBody UserDTO dto, @AuthenticationPrincipal Employee employee) {
         ApiResponse<?> response = userService.edit(id, dto, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
@@ -88,6 +89,11 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, @AuthenticationPrincipal Employee employee) {
         ApiResponse<?> response = userService.delete(id, employee);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+    @DeleteMapping("/completeShutdown/{id}")
+    public ResponseEntity<?> completeShutdown(@PathVariable Long id, @AuthenticationPrincipal Employee employee){
+        ApiResponse<?> response = userService.completeShutdown(id, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 

@@ -282,7 +282,7 @@ public class UserService {
         user.setActive(!user.isActive());
         userRepository.save(user);
         return ApiResponse.builder().
-                message("Is deleted !").
+                message("Deleted !").
                 success(true).
                 status(200).
                 build();
@@ -433,6 +433,24 @@ public class UserService {
         }
         return ApiResponse.builder().
                 message("Added").
+                success(true).
+                status(200).
+                build();
+    }
+
+    public ApiResponse<?> completeShutdown(Long id, Employee employee) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty() || !userOptional.get().getDepartment().getCompany().getId().equals(employee.getCompany().getId())) {
+            return ApiResponse.builder().
+                    message("User is not found !").
+                    success(false).
+                    status(400).
+                    build();
+        }
+
+        userRepository.deleteById(id);
+        return ApiResponse.builder().
+                message("Deleted !").
                 success(true).
                 status(200).
                 build();
