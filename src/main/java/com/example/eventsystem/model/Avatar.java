@@ -24,7 +24,7 @@ public class Avatar {
     @JsonIgnore
     private List<Attachment> photos;
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY,  cascade = CascadeType.ALL)
     @ToString.Exclude
     private User user;
     @Column(columnDefinition = "text")
