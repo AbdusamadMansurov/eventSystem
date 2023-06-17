@@ -97,8 +97,8 @@ public class UserController {
         return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    @GetMapping("/count")
-    public ResponseEntity<?> getCallCountByUser(@RequestParam Long userId, @AuthenticationPrincipal Employee employee){
+    @GetMapping("/count/{userId}")
+    public ResponseEntity<?> getCallCountByUser(@PathVariable Long userId, @AuthenticationPrincipal Employee employee){
         ApiResponse<?> response = userService.getCallCountByUser(userId, employee);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
