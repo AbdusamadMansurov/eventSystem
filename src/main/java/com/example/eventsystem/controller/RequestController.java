@@ -45,7 +45,6 @@ public class RequestController {
         ApiResponse<SiteHistory> response = requestService.getOneSiteHistory(id);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
-
     @PatchMapping("/request/{id}")
     public ResponseEntity<?> editRequestStatus(@PathVariable Long id, @AuthenticationPrincipal Employee employee){
         ApiResponse<Request> response = requestService.editRequestStatus(id, employee);
